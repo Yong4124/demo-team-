@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('USFK Jobs - 메인')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: header}"></nav>
+
+<main>
+    <!-- 히어로 섹션 -->
+    <section class="bg-primary text-white py-5">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <h1 class="display-4 fw-bold mb-3">주한미군 전역장병<br>채용 플랫폼</h1>
+                    <p class="lead mb-4">
+                        USFK 전역장병과 한국 기업을 연결하는<br>
+                        취업 플랫폼입니다.
+                    </p>
+                    <div class="d-flex gap-3">
+                        <a th:href="@{/job/list}" class="btn btn-light btn-lg">
+                            <i class="bi bi-search me-2"></i>채용공고 보기
+                        </a>
+                        <a th:href="@{/auth/register}" class="btn btn-outline-light btn-lg" sec:authorize="!isAuthenticated()">
+                            <i class="bi bi-person-plus me-2"></i>회원가입
+                        </a>
+                    </div>
+                </div>
+                <div class="col-lg-6 text-center d-none d-lg-block">
+                    <i class="bi bi-people-fill" style="font-size: 12rem; opacity: 0.3;"></i>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 최신 채용공고 -->
+    <section class="py-5">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="fw-bold mb-0">
+                    <i class="bi bi-briefcase me-2 text-primary"></i>최신 채용공고
+                </h2>
+                <a th:href="@{/job/list}" class="btn btn-outline-primary">
+                    전체보기 <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+            
+            <div class="row g-4">
+                <div class="col-md-6 col-lg-4" th:each="job : ${recentJobs}">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title" th:text="${job.title}">채용공고 제목</h5>
+                            <h6 class="card-subtitle mb-2 text-muted" th:text="${job.companyMember.company}">회사명</h6>
+                            <p class="card-text">
+                                <small class="text-muted">
+                                    <i class="bi bi-geo-alt me-1"></i>
+                                    <span th:text="${job.jobLocation} ?: '미정'">근무지</span>
+                                </small>
+                            </p>
+                            <p class="card-text">
+                                <small class="text-muted">
+                                    <i class="bi bi-calendar me-1"></i>
+                                    마감: <span th:text="${#temporals.format(job.endDate, 'yyyy-MM-dd')}">2024-12-31</span>
+                                </small>
+                            </p>
+                        </div>
+                        <div class="card-footer bg-transparent">
+                            <a th:href="@{/job/detail/{id}(id=${job.id})}" class="btn btn-primary btn-sm w-100">
+                                상세보기
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 채용공고가 없을 때 -->
+                <div class="col-12" th:if="${#lists.isEmpty(recentJobs)}">
+                    <div class="alert alert-info text-center">
+                        <i class="bi bi-info-circle me-2"></i>
+                        등록된 채용공고가 없습니다.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 서비스 소개 -->
+    <section class="py-5 bg-light">
+        <div class="container">
+            <h2 class="text-center fw-bold mb-5">서비스 안내</h2>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="card h-100 border-0 shadow-sm text-center p-4">
+                        <div class="card-body">
+                            <i class="bi bi-person-badge display-4 text-primary mb-3"></i>
+                            <h5 class="card-title">개인회원</h5>
+                            <p class="card-text text-muted">
+                                이력서 등록 및 관리<br>
+                                채용공고 지원<br>
+                                지원현황 확인
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100 border-0 shadow-sm text-center p-4">
+                        <div class="card-body">
+                            <i class="bi bi-building display-4 text-primary mb-3"></i>
+                            <h5 class="card-title">기업회원</h5>
+                            <p class="card-text text-muted">
+                                채용공고 등록 및 관리<br>
+                                지원자 이력서 열람<br>
+                                지원자 심사 관리
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100 border-0 shadow-sm text-center p-4">
+                        <div class="card-body">
+                            <i class="bi bi-shield-check display-4 text-primary mb-3"></i>
+                            <h5 class="card-title">신뢰할 수 있는 매칭</h5>
+                            <p class="card-text text-muted">
+                                검증된 기업 정보<br>
+                                안전한 개인정보 보호<br>
+                                체계적인 채용 프로세스
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

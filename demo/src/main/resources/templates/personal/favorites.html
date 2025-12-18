@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('USFK Jobs - 관심 채용공고')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: header}"></nav>
+
+<main class="py-5">
+    <div class="container">
+        <div class="row">
+            <!-- 사이드바 -->
+            <div class="col-md-3">
+                <div class="list-group shadow-sm">
+                    <a th:href="@{/personal/mypage}" class="list-group-item list-group-item-action">
+                        <i class="bi bi-house me-2"></i>마이페이지
+                    </a>
+                    <a th:href="@{/personal/edit}" class="list-group-item list-group-item-action">
+                        <i class="bi bi-person-gear me-2"></i>회원정보 수정
+                    </a>
+                    <a th:href="@{/personal/resumes}" class="list-group-item list-group-item-action">
+                        <i class="bi bi-file-earmark-person me-2"></i>이력서 관리
+                    </a>
+                    <a th:href="@{/personal/applications}" class="list-group-item list-group-item-action">
+                        <i class="bi bi-send me-2"></i>지원현황
+                    </a>
+                    <a th:href="@{/personal/favorites}" class="list-group-item list-group-item-action active">
+                        <i class="bi bi-heart me-2"></i>관심 채용공고
+                    </a>
+                </div>
+            </div>
+            
+            <!-- 메인 콘텐츠 -->
+            <div class="col-md-9">
+                <h4 class="fw-bold mb-4">
+                    <i class="bi bi-heart me-2 text-danger"></i>관심 채용공고
+                </h4>
+                
+                <div class="row g-4" th:if="${not #lists.isEmpty(favorites)}">
+                    <div class="col-md-6" th:each="fav : ${favorites}">
+                        <div class="card shadow-sm h-100">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <span class="badge bg-primary" th:if="${fav.jobPosting.jobType}" 
+                                          th:text="${fav.jobPosting.jobType}">정규직</span>
+                                    <button class="btn btn-link text-danger p-0" 
+                                            th:onclick="'removeFavorite(' + ${fav.jobPosting.id} + ')'">
+                                        <i class="bi bi-heart-fill"></i>
+                                    </button>
+                                </div>
+                                <h5 class="card-title mt-2">
+                                    <a th:href="@{/job/detail/{id}(id=${fav.jobPosting.id})}" 
+                                       th:text="${fav.jobPosting.title}" class="text-decoration-none text-dark">공고제목</a>
+                                </h5>
+                                <h6 class="card-subtitle mb-2 text-primary" 
+                                    th:text="${fav.jobPosting.companyMember.company}">회사명</h6>
+                                <p class="card-text small text-muted">
+                                    <i class="bi bi-geo-alt me-1"></i>
+                                    <span th:text="${fav.jobPosting.jobLocation} ?: '미정'">근무지</span>
+                                </p>
+                                <p class="card-text small text-muted">
+                                    <i class="bi bi-calendar me-1"></i>
+                                    마감: <span th:text="${#temporals.format(fav.jobPosting.endDate, 'yyyy-MM-dd')}">마감일</span>
+                                </p>
+                            </div>
+                            <div class="card-footer bg-transparent">
+                                <a th:href="@{/job/detail/{id}(id=${fav.jobPosting.id})}" 
+                                   class="btn btn-outline-primary btn-sm w-100">상세보기</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="text-center text-muted py-5" th:if="${#lists.isEmpty(favorites)}">
+                    <i class="bi bi-heart display-4 d-block mb-3"></i>
+                    <h5>관심 등록한 공고가 없습니다.</h5>
+                    <p class="mb-3">마음에 드는 채용공고를 관심 등록해보세요!</p>
+                    <a th:href="@{/job/list}" class="btn btn-primary">채용공고 보기</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+
+<script>
+function removeFavorite(jobId) {
+    if (!confirm('관심 등록을 해제하시겠습니까?')) return;
+    
+    fetch('/personal/favorite/remove', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: 'jobId=' + jobId
+    })
+    .then(response => {
+        if (response.ok) {
+            location.reload();
+        } else {
+            alert('처리 중 오류가 발생했습니다.');
+        }
+    });
+}
+</script>
+</body>
+</html>

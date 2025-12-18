@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('USFK Jobs - 기업회원 가입')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: header}"></nav>
+
+<main class="py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card shadow">
+                    <div class="card-header bg-success text-white">
+                        <h4 class="mb-0">
+                            <i class="bi bi-building me-2"></i>기업회원 가입
+                        </h4>
+                    </div>
+                    <div class="card-body p-4">
+                        <form th:action="@{/auth/register/company}" method="post" th:object="${registerDto}">
+                            
+                            <!-- 계정 정보 -->
+                            <h5 class="mb-3 text-success"><i class="bi bi-key me-2"></i>계정 정보</h5>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="loginId" class="form-label">아이디 <span class="text-danger">*</span></label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" id="loginId" th:field="*{loginId}" 
+                                               th:classappend="${#fields.hasErrors('loginId')} ? 'is-invalid'" required>
+                                        <button type="button" class="btn btn-outline-secondary" onclick="checkDuplicateId('company')">중복확인</button>
+                                    </div>
+                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('loginId')}" th:errors="*{loginId}"></div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="email" class="form-label">이메일 <span class="text-danger">*</span></label>
+                                    <input type="email" class="form-control" id="email" th:field="*{email}" 
+                                           th:classappend="${#fields.hasErrors('email')} ? 'is-invalid'" required>
+                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="password" class="form-label">비밀번호 <span class="text-danger">*</span></label>
+                                    <input type="password" class="form-control" id="password" th:field="*{password}" 
+                                           th:classappend="${#fields.hasErrors('password')} ? 'is-invalid'" required>
+                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="passwordConfirm" class="form-label">비밀번호 확인 <span class="text-danger">*</span></label>
+                                    <input type="password" class="form-control" id="passwordConfirm" th:field="*{passwordConfirm}" 
+                                           th:classappend="${#fields.hasErrors('passwordConfirm')} ? 'is-invalid'" required>
+                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('passwordConfirm')}" th:errors="*{passwordConfirm}"></div>
+                                </div>
+                            </div>
+
+                            <hr class="my-4">
+
+                            <!-- 담당자 정보 -->
+                            <h5 class="mb-3 text-success"><i class="bi bi-person me-2"></i>담당자 정보</h5>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="managerName" class="form-label">담당자명 <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="managerName" th:field="*{managerName}" 
+                                           th:classappend="${#fields.hasErrors('managerName')} ? 'is-invalid'" required>
+                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('managerName')}" th:errors="*{managerName}"></div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="department" class="form-label">부서명</label>
+                                    <input type="text" class="form-control" id="department" th:field="*{department}">
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="phone" class="form-label">전화번호 <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="phone" th:field="*{phone}" 
+                                           th:classappend="${#fields.hasErrors('phone')} ? 'is-invalid'" placeholder="010-0000-0000" required>
+                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}"></div>
+                                </div>
+                            </div>
+
+                            <hr class="my-4">
+
+                            <!-- 기업 정보 -->
+                            <h5 class="mb-3 text-success"><i class="bi bi-building me-2"></i>기업 정보</h5>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="company" class="form-label">회사명 <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="company" th:field="*{company}" 
+                                           th:classappend="${#fields.hasErrors('company')} ? 'is-invalid'" required>
+                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('company')}" th:errors="*{company}"></div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="presidentName" class="form-label">대표자명 <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="presidentName" th:field="*{presidentName}" 
+                                           th:classappend="${#fields.hasErrors('presidentName')} ? 'is-invalid'" required>
+                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('presidentName')}" th:errors="*{presidentName}"></div>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="businessRegistNum" class="form-label">사업자번호 <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="businessRegistNum" th:field="*{businessRegistNum}" 
+                                           th:classappend="${#fields.hasErrors('businessRegistNum')} ? 'is-invalid'" 
+                                           placeholder="000-00-00000" required>
+                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('businessRegistNum')}" th:errors="*{businessRegistNum}"></div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="parentCompanyCd" class="form-label">그룹사</label>
+                                    <select class="form-select" id="parentCompanyCd" th:field="*{parentCompanyCd}">
+                                        <option value="">선택 (해당없음)</option>
+                                        <option value="1">삼성</option>
+                                        <option value="2">SK</option>
+                                        <option value="3">현대자동차그룹</option>
+                                        <option value="4">LG</option>
+                                        <option value="5">롯데</option>
+                                        <option value="6">한화</option>
+                                        <option value="7">LS</option>
+                                        <option value="8">DL</option>
+                                        <option value="9">두산</option>
+                                        <option value="10">한국타이어</option>
+                                        <option value="11">효성</option>
+                                        <option value="12">금호타이어</option>
+                                        <option value="13">솔브레인</option>
+                                        <option value="14">SD바이오센서</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="companyAddress" class="form-label">회사주소 (본사)</label>
+                                <textarea class="form-control" id="companyAddress" th:field="*{companyAddress}" rows="2"></textarea>
+                            </div>
+
+                            <hr class="my-4">
+
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-success btn-lg">
+                                    <i class="bi bi-building-add me-2"></i>회원가입
+                                </button>
+                                <a th:href="@{/auth/register}" class="btn btn-outline-secondary">
+                                    <i class="bi bi-arrow-left me-2"></i>돌아가기
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

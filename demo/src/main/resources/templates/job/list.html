@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('USFK Jobs - 채용공고')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: header}"></nav>
+
+<main class="py-5">
+    <div class="container">
+        <h2 class="fw-bold mb-4">
+            <i class="bi bi-briefcase me-2 text-primary"></i>채용공고
+        </h2>
+        
+        <!-- 검색 -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <form th:action="@{/job/list}" method="get">
+                    <div class="row g-3 align-items-center">
+                        <div class="col-md-10">
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-search"></i></span>
+                                <input type="text" class="form-control" name="keyword" 
+                                       th:value="${keyword}" placeholder="채용공고 제목 또는 회사명으로 검색">
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <button type="submit" class="btn btn-primary w-100">검색</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- 검색 결과 정보 -->
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <p class="text-muted mb-0">
+                총 <strong th:text="${#lists.size(jobPostings)}">0</strong>건의 채용공고
+                <span th:if="${keyword}">
+                    - "<span th:text="${keyword}">검색어</span>" 검색 결과
+                </span>
+            </p>
+            <a th:href="@{/job/list}" class="btn btn-outline-secondary btn-sm" th:if="${keyword}">
+                <i class="bi bi-x-circle me-1"></i>검색 초기화
+            </a>
+        </div>
+        
+        <!-- 채용공고 목록 -->
+        <div class="row g-4">
+            <div class="col-md-6 col-lg-4" th:each="job : ${jobPostings}">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <span class="badge bg-primary" th:if="${job.jobType}" th:text="${job.jobType}">정규직</span>
+                            <small class="text-muted">
+                                D-<span th:text="${T(java.time.temporal.ChronoUnit).DAYS.between(T(java.time.LocalDate).now(), job.endDate)}">7</span>
+                            </small>
+                        </div>
+                        <h5 class="card-title mb-2">
+                            <a th:href="@{/job/detail/{id}(id=${job.id})}" class="text-decoration-none text-dark" th:text="${job.title}">
+                                채용공고 제목
+                            </a>
+                        </h5>
+                        <h6 class="card-subtitle mb-3 text-primary" th:text="${job.companyMember.company}">회사명</h6>
+                        
+                        <ul class="list-unstyled small text-muted mb-3">
+                            <li th:if="${job.jobLocation}">
+                                <i class="bi bi-geo-alt me-1"></i>
+                                <span th:text="${job.jobLocation}">근무지</span>
+                            </li>
+                            <li th:if="${job.experience}">
+                                <i class="bi bi-person-workspace me-1"></i>
+                                <span th:text="${job.experience}">경력</span>
+                            </li>
+                            <li th:if="${job.baseSalary}">
+                                <i class="bi bi-currency-dollar me-1"></i>
+                                <span th:text="${job.baseSalary}">급여</span>
+                            </li>
+                        </ul>
+                        
+                        <div class="d-flex justify-content-between align-items-center">
+                            <small class="text-muted">
+                                <i class="bi bi-calendar me-1"></i>
+                                마감: <span th:text="${#temporals.format(job.endDate, 'yyyy-MM-dd')}">2024-12-31</span>
+                            </small>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-transparent">
+                        <a th:href="@{/job/detail/{id}(id=${job.id})}" class="btn btn-outline-primary btn-sm w-100">
+                            상세보기 <i class="bi bi-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 채용공고가 없을 때 -->
+            <div class="col-12" th:if="${#lists.isEmpty(jobPostings)}">
+                <div class="alert alert-info text-center py-5">
+                    <i class="bi bi-info-circle display-4 d-block mb-3"></i>
+                    <h5 th:if="${keyword}">
+                        "<span th:text="${keyword}">검색어</span>"에 대한 검색 결과가 없습니다.
+                    </h5>
+                    <h5 th:unless="${keyword}">등록된 채용공고가 없습니다.</h5>
+                    <p class="text-muted mb-0">다른 검색어로 시도해보세요.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

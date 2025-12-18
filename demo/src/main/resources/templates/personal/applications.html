@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('USFK Jobs - 지원현황')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: header}"></nav>
+
+<main class="py-5">
+    <div class="container">
+        <div class="row">
+            <!-- 사이드바 -->
+            <div class="col-md-3">
+                <div class="list-group shadow-sm">
+                    <a th:href="@{/personal/mypage}" class="list-group-item list-group-item-action">
+                        <i class="bi bi-house me-2"></i>마이페이지
+                    </a>
+                    <a th:href="@{/personal/edit}" class="list-group-item list-group-item-action">
+                        <i class="bi bi-person-gear me-2"></i>회원정보 수정
+                    </a>
+                    <a th:href="@{/personal/resumes}" class="list-group-item list-group-item-action">
+                        <i class="bi bi-file-earmark-person me-2"></i>이력서 관리
+                    </a>
+                    <a th:href="@{/personal/applications}" class="list-group-item list-group-item-action active">
+                        <i class="bi bi-send me-2"></i>지원현황
+                    </a>
+                    <a th:href="@{/personal/favorites}" class="list-group-item list-group-item-action">
+                        <i class="bi bi-heart me-2"></i>관심 채용공고
+                    </a>
+                </div>
+            </div>
+            
+            <!-- 메인 콘텐츠 -->
+            <div class="col-md-9">
+                <!-- 메시지 -->
+                <div class="alert alert-success alert-dismissible fade show" th:if="${successMessage}">
+                    <i class="bi bi-check-circle me-2"></i>
+                    <span th:text="${successMessage}">성공</span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+                
+                <h4 class="fw-bold mb-4">
+                    <i class="bi bi-send me-2 text-primary"></i>지원현황
+                </h4>
+                
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <div class="table-responsive" th:if="${not #lists.isEmpty(applications)}">
+                            <table class="table table-hover">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>채용공고</th>
+                                        <th>회사명</th>
+                                        <th>마감일</th>
+                                        <th>심사상태</th>
+                                        <th>관리</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="app : ${applications}">
+                                        <td>
+                                            <a th:href="@{/job/detail/{id}(id=${app.jobPosting.id})}" 
+                                               th:text="${app.jobPosting.title}" class="text-decoration-none fw-bold">공고제목</a>
+                                        </td>
+                                        <td th:text="${app.jobPosting.companyMember.company}">회사명</td>
+                                        <td th:text="${#temporals.format(app.jobPosting.endDate, 'yyyy-MM-dd')}">마감일</td>
+                                        <td>
+                                            <span class="badge bg-secondary" th:if="${app.reviewStatus == 0}">미심사</span>
+                                            <span class="badge bg-info" th:if="${app.reviewStatus == 1}">1차 합격</span>
+                                            <span class="badge bg-success" th:if="${app.reviewStatus == 2}">최종 합격</span>
+                                            <span class="badge bg-danger" th:if="${app.reviewStatus == 3}">불합격</span>
+                                            <span class="badge bg-warning" th:if="${app.cancelStatus == 'Y'}">지원취소</span>
+                                        </td>
+                                        <td>
+                                            <form th:action="@{/personal/apply/cancel}" method="post" 
+                                                  th:if="${app.cancelStatus != 'Y' and app.reviewStatus == 0}"
+                                                  onsubmit="return confirm('지원을 취소하시겠습니까?');">
+                                                <input type="hidden" name="applicationId" th:value="${app.id}">
+                                                <button type="submit" class="btn btn-outline-danger btn-sm">취소</button>
+                                            </form>
+                                            <span class="text-muted small" th:if="${app.cancelStatus == 'Y'}">취소됨</span>
+                                            <span class="text-muted small" th:if="${app.cancelStatus != 'Y' and app.reviewStatus != 0}">-</span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="text-center text-muted py-5" th:if="${#lists.isEmpty(applications)}">
+                            <i class="bi bi-inbox display-4 d-block mb-3"></i>
+                            <h5>지원한 공고가 없습니다.</h5>
+                            <p class="mb-3">관심있는 채용공고에 지원해보세요!</p>
+                            <a th:href="@{/job/list}" class="btn btn-primary">채용공고 보기</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('USFK Jobs - 개인회원 가입')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: header}"></nav>
+
+<main class="py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card shadow">
+                    <div class="card-header bg-primary text-white">
+                        <h4 class="mb-0">
+                            <i class="bi bi-person-badge me-2"></i>개인회원 가입
+                        </h4>
+                    </div>
+                    <div class="card-body p-4">
+                        <form th:action="@{/auth/register/personal}" method="post" th:object="${registerDto}">
+                            
+                            <!-- 계정 정보 -->
+                            <h5 class="mb-3 text-primary"><i class="bi bi-key me-2"></i>계정 정보</h5>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="loginId" class="form-label">아이디 <span class="text-danger">*</span></label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" id="loginId" th:field="*{loginId}" 
+                                               th:classappend="${#fields.hasErrors('loginId')} ? 'is-invalid'" required>
+                                        <button type="button" class="btn btn-outline-secondary" onclick="checkDuplicateId('personal')">중복확인</button>
+                                    </div>
+                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('loginId')}" th:errors="*{loginId}"></div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="email" class="form-label">이메일 <span class="text-danger">*</span></label>
+                                    <input type="email" class="form-control" id="email" th:field="*{email}" 
+                                           th:classappend="${#fields.hasErrors('email')} ? 'is-invalid'" required>
+                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="password" class="form-label">비밀번호 <span class="text-danger">*</span></label>
+                                    <input type="password" class="form-control" id="password" th:field="*{password}" 
+                                           th:classappend="${#fields.hasErrors('password')} ? 'is-invalid'" required>
+                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="passwordConfirm" class="form-label">비밀번호 확인 <span class="text-danger">*</span></label>
+                                    <input type="password" class="form-control" id="passwordConfirm" th:field="*{passwordConfirm}" 
+                                           th:classappend="${#fields.hasErrors('passwordConfirm')} ? 'is-invalid'" required>
+                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('passwordConfirm')}" th:errors="*{passwordConfirm}"></div>
+                                </div>
+                            </div>
+
+                            <hr class="my-4">
+
+                            <!-- 개인 정보 -->
+                            <h5 class="mb-3 text-primary"><i class="bi bi-person me-2"></i>개인 정보</h5>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="firstName" class="form-label">이름 (First Name) <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="firstName" th:field="*{firstName}" 
+                                           th:classappend="${#fields.hasErrors('firstName')} ? 'is-invalid'" required>
+                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}"></div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="lastName" class="form-label">성 (Last Name) <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="lastName" th:field="*{lastName}" 
+                                           th:classappend="${#fields.hasErrors('lastName')} ? 'is-invalid'" required>
+                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}"></div>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-4">
+                                    <label for="birthDate" class="form-label">생년월일</label>
+                                    <input type="date" class="form-control" id="birthDate" th:field="*{birthDate}">
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="gender" class="form-label">성별</label>
+                                    <select class="form-select" id="gender" th:field="*{gender}">
+                                        <option value="">선택</option>
+                                        <option value="1">남성</option>
+                                        <option value="2">여성</option>
+                                        <option value="3">기타</option>
+                                        <option value="4">무응답</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="residence" class="form-label">거주지</label>
+                                    <select class="form-select" id="residence" th:field="*{residence}">
+                                        <option value="">선택</option>
+                                        <option value="2">대한민국</option>
+                                        <option value="3">미국</option>
+                                        <option value="1">기타</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <hr class="my-4">
+
+                            <!-- 군 정보 -->
+                            <h5 class="mb-3 text-primary"><i class="bi bi-shield me-2"></i>군 정보</h5>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="serviceCategory" class="form-label">복무형태</label>
+                                    <select class="form-select" id="serviceCategory" th:field="*{serviceCategory}">
+                                        <option value="">선택</option>
+                                        <option value="1">USFK</option>
+                                        <option value="2">KATUSA</option>
+                                        <option value="3">CFC(ROK)</option>
+                                        <option value="4">Retired MND,JCS,and/or services(ROK)</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="serviceBranch" class="form-label">소속 군</label>
+                                    <select class="form-select" id="serviceBranch" th:field="*{serviceBranch}">
+                                        <option value="">선택</option>
+                                        <option value="1">KATUSA</option>
+                                        <option value="2">ROK Air Force</option>
+                                        <option value="3">ROK Army</option>
+                                        <option value="4">ROK Marine Corps</option>
+                                        <option value="5">ROK Navy</option>
+                                        <option value="6">ROKA Support Group</option>
+                                        <option value="7">U.S Air Force</option>
+                                        <option value="8">U.S Army</option>
+                                        <option value="9">U.S DoD Personnel</option>
+                                        <option value="10">U.S Marine Corps</option>
+                                        <option value="11">U.S Navy</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="lastRank" class="form-label">계급</label>
+                                    <input type="text" class="form-control" id="lastRank" th:field="*{lastRank}">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="serviceYear" class="form-label">복무년도</label>
+                                    <input type="text" class="form-control" id="serviceYear" th:field="*{serviceYear}" placeholder="예: 2020-2022">
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="serviceStation" class="form-label">주둔지</label>
+                                    <input type="text" class="form-control" id="serviceStation" th:field="*{serviceStation}">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="unitPosition" class="form-label">부대 및 직책</label>
+                                    <input type="text" class="form-control" id="unitPosition" th:field="*{unitPosition}">
+                                </div>
+                            </div>
+
+                            <hr class="my-4">
+
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-primary btn-lg">
+                                    <i class="bi bi-person-plus me-2"></i>회원가입
+                                </button>
+                                <a th:href="@{/auth/register}" class="btn btn-outline-secondary">
+                                    <i class="bi bi-arrow-left me-2"></i>돌아가기
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>
