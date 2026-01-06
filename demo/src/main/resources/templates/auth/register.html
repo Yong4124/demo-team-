@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('회원가입 - 주한미군 전역장병 채용 플랫폼')}"></head>
+
+<body class="sub">
+<div class="wrapper">
+
+    <!-- Header -->
+    <th:block th:replace="~{fragments/header :: header}"></th:block>
+
+    <div class="sub_container">
+        <div class="container">
+            <div class="job_view">
+                <div class="sub_tit mb40">회원가입</div>
+                
+                <div class="sub_tab">
+                    <a th:href="@{/auth/register/personal}" class="on">개인회원</a>
+                    <a th:href="@{/auth/register/company}">기업회원</a>
+                </div>
+                
+                <div class="register_select" style="display:flex; gap:40px; justify-content:center; margin-top:60px;">
+                    <a th:href="@{/auth/register/personal}" class="register_card" style="flex:1; max-width:400px; text-decoration:none;">
+                        <div class="box" style="border:2px solid #ccc; border-radius:30px; padding:60px 40px; text-align:center; transition:all .3s;">
+                            <div class="icon" style="margin-bottom:30px;">
+                                <img th:src="@{/img/sub/ico_man.png}" alt="개인회원" style="width:80px;">
+                            </div>
+                            <div class="title" style="font-size:24px; font-weight:700; color:#222; margin-bottom:15px;">개인회원</div>
+                            <div class="desc" style="font-size:16px; color:#666; line-height:1.6;">
+                                주한미군 전역(예정) 장병을 위한<br>
+                                채용 서비스입니다.
+                            </div>
+                        </div>
+                    </a>
+                    
+                    <a th:href="@{/auth/register/company}" class="register_card" style="flex:1; max-width:400px; text-decoration:none;">
+                        <div class="box" style="border:2px solid #ccc; border-radius:30px; padding:60px 40px; text-align:center; transition:all .3s;">
+                            <div class="icon" style="margin-bottom:30px;">
+                                <img th:src="@{/img/common/default_logo.png}" alt="기업회원" style="width:80px;">
+                            </div>
+                            <div class="title" style="font-size:24px; font-weight:700; color:#222; margin-bottom:15px;">기업회원</div>
+                            <div class="desc" style="font-size:16px; color:#666; line-height:1.6;">
+                                미국 진출 한국기업을 위한<br>
+                                채용 서비스입니다.
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+
+</div>
+
+<!-- Scripts -->
+<th:block th:replace="~{fragments/footer :: scripts}"></th:block>
+<style>
+.register_card:hover .box {
+    border-color: #255EB8;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+}
+</style>
+
+</body>
+</html>

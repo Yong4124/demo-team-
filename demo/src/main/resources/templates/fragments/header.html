@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<!-- Header Fragment -->
+<th:block th:fragment="header">
+    <div class="header_top">
+        <div class="container">
+            <div class="ht_wrap">
+                <div class="ht_bn">
+                    <a href="https://www.korcham.net/" target="_blank" class="mar"><img th:src="@{/img/common/t_bndea.svg}" alt="대한상공회의소"></a>
+                    <a href="https://kusaf.org/" target="_blank"><img th:src="@{/img/common/t_bnhan.svg}" alt="한미동맹재단"></a>
+                </div>
+                <div class="ht_info">
+                    <!-- 비로그인 -->
+                    <th:block sec:authorize="!isAuthenticated()">
+                        <a th:href="@{/auth/login}" class="login">로그인</a>
+                        <a th:href="@{/auth/register}" class="join">회원가입</a>
+                    </th:block>
+
+                    <!-- 로그인 상태 -->
+                    <th:block sec:authorize="isAuthenticated()">
+                        <a th:href="@{/auth/logout}" class="login">로그아웃</a>
+                        <a sec:authorize="hasRole('PERSONAL')" th:href="@{/personal/mypage}" class="join">마이페이지</a>
+                        <a sec:authorize="hasRole('COMPANY')" th:href="@{/company/mypage}" class="join">마이페이지</a>
+                        <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin/dashboard}" class="join">관리자</a>
+                    </th:block>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="gnb_wrap">
+        <div class="container">
+            <div class="gnb_box_line">
+                <div class="gnb_box">
+                    <h1>
+                        <a th:href="@{/}">
+                            <img th:src="@{/img/common/top_logo.svg}" alt="주한미군 전역장병 채용 플랫폼" style="height: 60px;">
+                        </a>
+                    </h1>
+                    <div class="gnb">
+                        <div class="one">
+                            <a th:href="@{/about}" class="onea" th:classappend="${#httpServletRequest != null and #strings.startsWith(#httpServletRequest.requestURI ?: '', '/about')} ? 'on' : ''">소개</a>
+                        </div>
+                        <div class="one">
+                            <a th:href="@{/job/list}" class="onea" th:classappend="${#httpServletRequest != null and #strings.startsWith(#httpServletRequest.requestURI ?: '', '/job')} ? 'on' : ''">채용공고</a>
+                        </div>
+                        <!-- 비로그인 시 마이페이지 (클릭하면 로그인 유도) -->
+                        <div class="one" sec:authorize="!isAuthenticated()">
+                            <a href="javascript:void(0);" onclick="confirmLogin()" class="onea">마이페이지</a>
+                        </div>
+                        <!-- 개인회원 마이페이지 -->
+                        <div class="one" sec:authorize="hasRole('PERSONAL')">
+                            <a th:href="@{/personal/mypage}" class="onea" th:classappend="${#httpServletRequest != null and #strings.startsWith(#httpServletRequest.requestURI ?: '', '/personal')} ? 'on' : ''">마이페이지</a>
+                        </div>
+                        <!-- 기업회원 마이페이지 -->
+                        <div class="one" sec:authorize="hasRole('COMPANY')">
+                            <a th:href="@{/company/mypage}" class="onea" th:classappend="${#httpServletRequest != null and #strings.startsWith(#httpServletRequest.requestURI ?: '', '/company')} ? 'on' : ''">마이페이지</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 모바일 메뉴 -->
+    <div class="ac-allwrap">
+        <div class="ac-allmenu">
+            <button type="button" class="btn-menu btnset">
+                <span class="bar"></span>
+                <span class="menutxt">MENU</span>
+            </button>
+        </div>
+    </div>
+
+    <div class="total_menu">
+        <div class="tmenu">
+            <div class="mem_info">
+                <th:block sec:authorize="!isAuthenticated()">
+                    <a th:href="@{/auth/login}">로그인</a>
+                    <a th:href="@{/auth/register}">회원가입</a>
+                </th:block>
+                <th:block sec:authorize="isAuthenticated()">
+                    <a th:href="@{/auth/logout}">로그아웃</a>
+                    <a sec:authorize="hasRole('PERSONAL')" th:href="@{/personal/mypage}">마이페이지</a>
+                    <a sec:authorize="hasRole('COMPANY')" th:href="@{/company/mypage}">마이페이지</a>
+                </th:block>
+            </div>
+            <div class="one">
+                <a th:href="@{/about}" class="onea">소개</a>
+            </div>
+            <div class="one">
+                <a th:href="@{/job/list}" class="onea">채용공고</a>
+            </div>
+            <!-- 비로그인 시 모바일 마이페이지 -->
+            <div class="one" sec:authorize="!isAuthenticated()">
+                <a href="javascript:void(0);" onclick="confirmLogin()" class="onea">마이페이지</a>
+            </div>
+            <div class="one" sec:authorize="hasRole('PERSONAL')">
+                <a th:href="@{/personal/mypage}" class="onea">마이페이지</a>
+            </div>
+            <div class="one" sec:authorize="hasRole('COMPANY')">
+                <a th:href="@{/company/mypage}" class="onea">마이페이지</a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 로그인 유도 스크립트 -->
+    <script th:inline="javascript">
+        function confirmLogin() {
+            if (confirm('회원전용입니다. 로그인 화면으로 이동하시겠습니까?')) {
+                window.location.href = /*[[@{/auth/login}]]*/ '/auth/login';
+            }
+        }
+    </script>
+</th:block>
+
+</html>

@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>기업회원 가입 - 주한미군 전역장병 채용 플랫폼</title>
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; background: #f5f5f5; }
+        a { text-decoration: none; color: inherit; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 15px; }
+        .header { background: #fff; border-bottom: 1px solid #e0e0e0; padding: 15px 0; }
+        .header .logo { font-size: 24px; font-weight: 700; color: #255EB8; }
+        .join_wrap { max-width: 900px; margin: 0 auto; padding: 40px 15px 80px; }
+        .page_tit { text-align: center; margin-bottom: 40px; }
+        .page_tit h2 { font-size: 32px; font-weight: 700; color: #255EB8; }
+        .page_tit p { font-size: 16px; color: #666; margin-top: 10px; }
+        .member_type { display: flex; justify-content: center; margin-bottom: 40px; gap: 10px; }
+        .member_type a { padding: 15px 40px; border: 2px solid #ddd; border-radius: 30px; font-size: 16px; color: #666; font-weight: 500; transition: all 0.3s; }
+        .member_type a.active, .member_type a:hover { background: #255EB8; color: #fff; border-color: #255EB8; }
+        .form_section { background: #fff; border: 1px solid #e0e0e0; border-radius: 10px; padding: 30px; margin-bottom: 20px; }
+        .section_tit { font-size: 18px; font-weight: 600; color: #333; padding-bottom: 15px; border-bottom: 2px solid #255EB8; margin-bottom: 25px; }
+        .form_row { display: flex; flex-wrap: wrap; margin: 0 -10px; }
+        .form_col { padding: 0 10px; margin-bottom: 20px; }
+        .form_col.full { width: 100%; }
+        .form_col.half { width: 50%; }
+        .form_col label { display: block; font-size: 14px; font-weight: 500; color: #333; margin-bottom: 8px; }
+        .form_col label .required { color: #e74c3c; margin-left: 3px; }
+        .form_col input, .form_col select, .form_col textarea { width: 100%; height: 45px; padding: 0 15px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px; }
+        .form_col textarea { height: 120px; padding: 15px; resize: vertical; }
+        .form_col input:focus, .form_col select:focus, .form_col textarea:focus { border-color: #255EB8; outline: none; }
+        .input_with_btn { display: flex; gap: 10px; }
+        .input_with_btn input { flex: 1; }
+        .input_with_btn button { width: 120px; background: #666; color: #fff; border: none; border-radius: 5px; font-size: 14px; cursor: pointer; }
+        .input_with_btn button:hover { background: #255EB8; }
+        .agree_section { background: #f9f9f9; border: 1px solid #e0e0e0; border-radius: 10px; padding: 25px; margin-bottom: 30px; }
+        .agree_tit { font-size: 16px; font-weight: 600; color: #333; margin-bottom: 15px; }
+        .agree_section textarea { width: 100%; height: 150px; padding: 15px; border: 1px solid #ddd; border-radius: 5px; font-size: 13px; line-height: 1.6; background: #fff; resize: none; }
+        .agree_check { margin-top: 15px; display: flex; align-items: center; gap: 8px; }
+        .agree_check input[type="checkbox"] { width: 18px; height: 18px; }
+        .agree_check label { font-size: 14px; color: #333; cursor: pointer; }
+        .btn_area { text-align: center; margin-top: 40px; }
+        .btn_area button { padding: 15px 60px; font-size: 18px; font-weight: 600; border: none; border-radius: 5px; cursor: pointer; margin: 0 5px; }
+        .btn_submit { background: #255EB8; color: #fff; }
+        .btn_submit:hover { background: #1a4a94; }
+        .btn_cancel { background: #fff; color: #666; border: 1px solid #ddd !important; }
+        .help_text { font-size: 12px; color: #999; margin-top: 5px; }
+        .valid_msg { font-size: 12px; margin-top: 5px; }
+        .valid_msg.success { color: #27ae60; }
+        .valid_msg.error { color: #e74c3c; }
+        .footer { background: #f0f0f0; padding: 30px 0; margin-top: 60px; text-align: center; color: #666; font-size: 14px; }
+        @media (max-width: 768px) { .form_col.half { width: 100%; } }
+    </style>
+</head>
+<body>
+
+<header class="header">
+    <div class="container">
+        <a href="/" class="logo">USFK Jobs</a>
+    </div>
+</header>
+
+<div class="join_wrap">
+    <div class="page_tit">
+        <h2>기업회원 가입</h2>
+        <p>주한미군 전역장병 채용 플랫폼에 오신 것을 환영합니다</p>
+    </div>
+
+    <div class="member_type">
+        <a href="/personal/register">개인회원</a>
+        <a href="/company/register" class="active">기업회원</a>
+    </div>
+
+    <form id="registerForm" onsubmit="return doRegister(event)">
+        <div class="form_section">
+            <h3 class="section_tit">기본 정보</h3>
+            <div class="form_row">
+                <div class="form_col half">
+                    <label>아이디 <span class="required">*</span></label>
+                    <div class="input_with_btn">
+                        <input type="text" id="loginId" placeholder="영문, 숫자 6자 이상" maxlength="50" required>
+                        <button type="button" onclick="checkId()">중복확인</button>
+                    </div>
+                    <p id="idValidMsg" class="valid_msg"></p>
+                    <input type="hidden" id="idChecked" value="N">
+                </div>
+                <div class="form_col half">
+                    <label>이메일 <span class="required">*</span></label>
+                    <div class="input_with_btn">
+                        <input type="email" id="email" placeholder="example@company.com" required>
+                        <button type="button" onclick="checkEmail()">중복확인</button>
+                    </div>
+                    <p id="emailValidMsg" class="valid_msg"></p>
+                    <input type="hidden" id="emailChecked" value="N">
+                </div>
+                <div class="form_col half">
+                    <label>비밀번호 <span class="required">*</span></label>
+                    <input type="password" id="password" placeholder="영문, 숫자, 특수문자 포함 8자 이상" required>
+                    <p class="help_text">영문, 숫자, 특수문자를 포함하여 8자 이상</p>
+                </div>
+                <div class="form_col half">
+                    <label>비밀번호 확인 <span class="required">*</span></label>
+                    <input type="password" id="passwordConfirm" placeholder="비밀번호를 다시 입력하세요" required>
+                    <p id="pwValidMsg" class="valid_msg"></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="form_section">
+            <h3 class="section_tit">회사 정보</h3>
+            <div class="form_row">
+                <div class="form_col half">
+                    <label>회사명 (한글) <span class="required">*</span></label>
+                    <input type="text" id="companyNmKo" placeholder="회사명을 입력하세요" required>
+                </div>
+                <div class="form_col half">
+                    <label>회사명 (영문)</label>
+                    <input type="text" id="companyNmEn" placeholder="Company Name">
+                </div>
+                <div class="form_col half">
+                    <label>사업자등록번호</label>
+                    <input type="text" id="bizNo" placeholder="000-00-00000" maxlength="12">
+                </div>
+                <div class="form_col half">
+                    <label>대표자명</label>
+                    <input type="text" id="ceoNm" placeholder="대표자명">
+                </div>
+                <div class="form_col half">
+                    <label>업종</label>
+                    <select id="industry">
+                        <option value="">선택하세요</option>
+                        <option value="제조업">제조업</option>
+                        <option value="IT/소프트웨어">IT/소프트웨어</option>
+                        <option value="반도체/전자">반도체/전자</option>
+                        <option value="자동차">자동차</option>
+                        <option value="배터리/에너지">배터리/에너지</option>
+                        <option value="기타">기타</option>
+                    </select>
+                </div>
+                <div class="form_col half">
+                    <label>회사 웹사이트</label>
+                    <input type="url" id="website" placeholder="https://www.company.com">
+                </div>
+                <div class="form_col full">
+                    <label>회사 주소 (한국)</label>
+                    <input type="text" id="addressKo" placeholder="한국 사업장 주소">
+                </div>
+                <div class="form_col full">
+                    <label>회사 주소 (미국)</label>
+                    <input type="text" id="addressUs" placeholder="미국 사업장 주소">
+                </div>
+                <div class="form_col full">
+                    <label>회사 소개</label>
+                    <textarea id="description" placeholder="회사 소개를 입력하세요"></textarea>
+                </div>
+            </div>
+        </div>
+
+        <div class="form_section">
+            <h3 class="section_tit">담당자 정보</h3>
+            <div class="form_row">
+                <div class="form_col half">
+                    <label>담당자명 <span class="required">*</span></label>
+                    <input type="text" id="managerNm" placeholder="담당자명" required>
+                </div>
+                <div class="form_col half">
+                    <label>담당자 직책</label>
+                    <input type="text" id="managerPosition" placeholder="직책">
+                </div>
+                <div class="form_col half">
+                    <label>전화번호 <span class="required">*</span></label>
+                    <input type="tel" id="phone" placeholder="02-0000-0000" required>
+                </div>
+                <div class="form_col half">
+                    <label>휴대폰번호</label>
+                    <input type="tel" id="mobile" placeholder="010-0000-0000">
+                </div>
+            </div>
+        </div>
+
+        <div class="agree_section">
+            <h4 class="agree_tit">개인정보 수집 및 이용 동의</h4>
+            <textarea readonly>대한상공회의소 회원가입에 신청하시는 분은 수집하는 개인정보의 수집 및 이용목적을 안내 드리오니 동의하여 주시기 바랍니다.
+
+1. 수집하는 개인정보 항목
+- 필수: 담당자명, 전화번호, 이메일, 아이디, 비밀번호, 회사명
+- 선택: 사업자등록번호, 대표자명, 회사주소, 업종, 웹사이트
+
+2. 개인정보의 보유 및 이용기간
+회원 탈퇴시까지 보유합니다.</textarea>
+            <div class="agree_check">
+                <input type="checkbox" id="agreePrivacy" required>
+                <label for="agreePrivacy">개인정보 수집 및 이용에 동의합니다. (필수)</label>
+            </div>
+        </div>
+
+        <div class="btn_area">
+            <button type="button" class="btn_cancel" onclick="history.back()">취소</button>
+            <button type="submit" class="btn_submit">가입하기</button>
+        </div>
+    </form>
+</div>
+
+<footer class="footer">
+    <p>© 2025 USFK Jobs. All rights reserved.</p>
+</footer>
+
+<script>
+document.getElementById('passwordConfirm').addEventListener('input', function() {
+    var pw = document.getElementById('password').value;
+    var msg = document.getElementById('pwValidMsg');
+    if (this.value && pw !== this.value) {
+        msg.textContent = '비밀번호가 일치하지 않습니다.';
+        msg.className = 'valid_msg error';
+    } else if (this.value) {
+        msg.textContent = '비밀번호가 일치합니다.';
+        msg.className = 'valid_msg success';
+    } else { msg.textContent = ''; }
+});
+
+async function checkId() {
+    var loginId = document.getElementById('loginId').value;
+    var msg = document.getElementById('idValidMsg');
+    if (!loginId) { alert('아이디를 입력해주세요.'); return; }
+    if (!/^[A-Za-z0-9]{6,}$/.test(loginId)) { alert('아이디는 6자 이상의 영문, 숫자여야 합니다.'); return; }
+    try {
+        var res = await fetch('/api/company/check-id/' + loginId);
+        var data = await res.json();
+        if (data.exists) {
+            msg.textContent = '이미 사용중인 ID입니다.'; msg.className = 'valid_msg error';
+            document.getElementById('idChecked').value = 'N';
+        } else {
+            msg.textContent = '사용 가능한 ID입니다.'; msg.className = 'valid_msg success';
+            document.getElementById('idChecked').value = 'Y';
+        }
+    } catch(e) { alert('오류가 발생했습니다.'); }
+}
+
+async function checkEmail() {
+    var email = document.getElementById('email').value;
+    var msg = document.getElementById('emailValidMsg');
+    if (!email) { alert('이메일을 입력해주세요.'); return; }
+    try {
+        var res = await fetch('/api/company/check-email/' + encodeURIComponent(email));
+        var data = await res.json();
+        if (data.exists) {
+            msg.textContent = '이미 사용중인 이메일입니다.'; msg.className = 'valid_msg error';
+            document.getElementById('emailChecked').value = 'N';
+        } else {
+            msg.textContent = '사용 가능한 이메일입니다.'; msg.className = 'valid_msg success';
+            document.getElementById('emailChecked').value = 'Y';
+        }
+    } catch(e) { alert('오류가 발생했습니다.'); }
+}
+
+document.getElementById('loginId').addEventListener('input', function() {
+    document.getElementById('idChecked').value = 'N';
+    document.getElementById('idValidMsg').textContent = '';
+});
+document.getElementById('email').addEventListener('input', function() {
+    document.getElementById('emailChecked').value = 'N';
+    document.getElementById('emailValidMsg').textContent = '';
+});
+
+async function doRegister(event) {
+    event.preventDefault();
+    if (document.getElementById('idChecked').value !== 'Y') { alert('아이디 중복확인을 해주세요.'); return false; }
+    if (document.getElementById('emailChecked').value !== 'Y') { alert('이메일 중복확인을 해주세요.'); return false; }
+    var pw = document.getElementById('password').value;
+    if (pw !== document.getElementById('passwordConfirm').value) { alert('비밀번호가 일치하지 않습니다.'); return false; }
+    if (!document.getElementById('agreePrivacy').checked) { alert('개인정보 수집에 동의해주세요.'); return false; }
+
+    var formData = {
+        loginId: document.getElementById('loginId').value,
+        password: pw,
+        companyNmKo: document.getElementById('companyNmKo').value,
+        companyNmEn: document.getElementById('companyNmEn').value,
+        bizNo: document.getElementById('bizNo').value,
+        ceoNm: document.getElementById('ceoNm').value,
+        managerNm: document.getElementById('managerNm').value,
+        managerPosition: document.getElementById('managerPosition').value,
+        email: document.getElementById('email').value,
+        phone: document.getElementById('phone').value,
+        mobile: document.getElementById('mobile').value,
+        addressKo: document.getElementById('addressKo').value,
+        addressUs: document.getElementById('addressUs').value,
+        industry: document.getElementById('industry').value,
+        website: document.getElementById('website').value,
+        description: document.getElementById('description').value
+    };
+
+    try {
+        var res = await fetch('/api/company/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(formData)
+        });
+        
+        if (!res.ok) {
+            var errorText = await res.text();
+            alert('서버 오류 (' + res.status + '): ' + errorText);
+            return false;
+        }
+        
+        var data = await res.json();
+        alert(data.message || '처리되었습니다.');
+        if (data.success) window.location.href = '/company/login';
+    } catch(e) { 
+        console.error('Error:', e);
+        alert('회원가입 중 오류: ' + e.message + '\n\nCompany-Service(8009)가 실행 중인지 확인하세요.'); 
+    }
+    return false;
+}
+</script>
+</body>
+</html>

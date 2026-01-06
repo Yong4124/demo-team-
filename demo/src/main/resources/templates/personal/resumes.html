@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('이력서관리 - 주한미군 전역장병 채용 플랫폼')}"></head>
+
+<body class="sub">
+<div class="wrapper">
+
+    <th:block th:replace="~{fragments/header :: header}"></th:block>
+
+    <div class="sub_container">
+        <div class="container">
+
+            <div th:replace="~{personal/fragments/sidebar :: sidebar('resumes')}"></div>
+
+            <div class="sub_tit_wrap between">
+                <div class="sub_tit">이력서관리</div>
+                <a th:href="@{/personal/resume/new}" class="btn-submit">이력서 등록</a>
+            </div>
+            <div class="sub_txt mb60">등록한 이력서를 관리할 수 있습니다.</div>
+
+            <div class="table_wrap">
+                <table class="data_table">
+                    <colgroup>
+                        <col width="8%"><col width="*"><col width="15%"><col width="12%"><col width="20%">
+                    </colgroup>
+                    <thead>
+                        <tr><th>번호</th><th>이력서 제목</th><th>공개여부</th><th>등록일</th><th>관리</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="resume, stat : ${resumes}">
+                            <td th:text="${stat.count}">1</td>
+                            <td style="text-align:left;"><a th:href="@{/personal/resume/{id}(id=${resume.id})}" th:text="${resume.title ?: '이력서'}">이력서</a></td>
+                            <td><span th:text="${resume.publicYn == 'Y'} ? '공개' : '비공개'">공개</span></td>
+                            <td th:text="${#temporals.format(resume.createdAt, 'yyyy-MM-dd')}">2025-01-01</td>
+                            <td>
+                                <a th:href="@{/personal/resume/edit/{id}(id=${resume.id})}" class="btn-sm">수정</a>
+                                <button type="button" class="btn-sm-cancel" th:onclick="'deleteResume(' + ${resume.id} + ')'">삭제</button>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(resumes)}">
+                            <td colspan="5" style="text-align:center; padding:60px;">
+                                <p style="font-size:18px; color:#666; margin-bottom:20px;">등록된 이력서가 없습니다.</p>
+                                <a th:href="@{/personal/resume/new}" class="btn-submit">이력서 등록하기</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+</div>
+<th:block th:replace="~{fragments/footer :: scripts}"></th:block>
+<script>
+function deleteResume(id) {
+    if (!confirm('이력서를 삭제하시겠습니까?')) return;
+    location.href = '/personal/resume/delete/' + id;
+}
+</script>
+<style>
+.data_table { width:100%; border-collapse:collapse; }
+.data_table th, .data_table td { padding:15px; border-bottom:1px solid #eee; text-align:center; }
+.data_table th { background:#f8f9fa; font-weight:600; }
+.data_table td a { color:#333; }
+.data_table td a:hover { color:#255EB8; }
+.btn-sm { padding:8px 15px; background:#255EB8; color:#fff; border-radius:5px; text-decoration:none; font-size:13px; margin-right:5px; }
+.btn-sm-cancel { padding:8px 15px; border:1px solid #ddd; background:#fff; border-radius:5px; cursor:pointer; font-size:13px; }
+.sub_tit_wrap.between { display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; }
+</style>
+</body>
+</html>

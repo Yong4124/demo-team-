@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('회원정보관리 - 주한미군 전역장병 채용 플랫폼')}"></head>
+
+<body class="sub">
+<div class="wrapper">
+
+    <th:block th:replace="~{fragments/header :: header}"></th:block>
+
+    <form id="profileForm" th:action="@{/personal/profile}" method="post">
+        <input type="hidden" name="id" th:value="${member.id}"/>
+        
+        <div class="sub_container">
+            <div class="container">
+
+                <div th:replace="~{personal/fragments/sidebar :: sidebar('profile')}"></div>
+
+                <div class="sub_tit mb20">회원정보관리</div>
+                <div class="sub_txt mb60">회원님의 정보를 수정·확인하실 수 있습니다. (이름, 생년월일 변경 불가)</div>
+
+                <!-- 성공/에러 메시지 -->
+                <div th:if="${success}" class="alert" style="background:#d4edda; padding:15px; border-radius:10px; margin-bottom:20px; text-align:center;">
+                    <span style="color:#155724;" th:text="${success}">저장되었습니다.</span>
+                </div>
+                <div th:if="${error}" class="alert" style="background:#f8d7da; padding:15px; border-radius:10px; margin-bottom:20px; text-align:center;">
+                    <span style="color:#721c24;" th:text="${error}">오류가 발생했습니다.</span>
+                </div>
+
+                <div class="sub_stit mb30">회원정보</div>
+                <div class="join_box only">
+                    <div class="join_form">
+
+                        <!-- 아이디 -->
+                        <div class="item">
+                            <div class="field">
+                                <div class="th">아이디</div>
+                                <div class="td">
+                                    <input type="text" class="input" th:value="${member.loginId}" readonly style="background:#f5f5f5;">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 이름 -->
+                        <div class="item">
+                            <div class="field">
+                                <div class="th">이름</div>
+                                <div class="td">
+                                    <input type="text" class="input" th:value="${member.firstName}" readonly style="background:#f5f5f5;">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 비밀번호 변경 -->
+                        <div class="item full">
+                            <div class="field">
+                                <div class="th">
+                                    <div class="icheck">
+                                        비밀번호를 수정하시겠습니까?
+                                        <div class="iradio_wrap" style="display:inline-flex; gap:15px; margin-left:20px;">
+                                            <div class="iradio">
+                                                <input type="radio" name="changePassword" id="pwYes" value="Y" onchange="togglePasswordFields(true)">
+                                                <label for="pwYes">예</label>
+                                            </div>
+                                            <div class="iradio">
+                                                <input type="radio" name="changePassword" id="pwNo" value="N" checked onchange="togglePasswordFields(false)">
+                                                <label for="pwNo">아니오</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 비밀번호 (기본 숨김) -->
+                        <div id="passwordFields" style="display:none;">
+                            <div class="item">
+                                <div class="field">
+                                    <div class="th">새 비밀번호</div>
+                                    <div class="td">
+                                        <input type="password" name="newPassword" id="newPassword" class="input" placeholder="8~16자의 영문, 숫자, 특수기호" maxlength="16">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="item">
+                                <div class="field">
+                                    <div class="th">비밀번호 확인</div>
+                                    <div class="td">
+                                        <input type="password" name="confirmPassword" id="confirmPassword" class="input" maxlength="16">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 생년월일 -->
+                        <div class="item">
+                            <div class="field">
+                                <div class="th">생년월일</div>
+                                <div class="td">
+                                    <input type="text" class="input" th:value="${member.birthDate}" readonly style="background:#f5f5f5;">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 성별 -->
+                        <div class="item">
+                            <div class="field">
+                                <div class="th">성별</div>
+                                <div class="td">
+                                    <div class="iradio_wrap">
+                                        <div class="iradio">
+                                            <input type="radio" name="gender" id="gender1" value="남자" th:checked="${member.gender == '남자'}">
+                                            <label for="gender1">남자</label>
+                                        </div>
+                                        <div class="iradio">
+                                            <input type="radio" name="gender" id="gender2" value="여자" th:checked="${member.gender == '여자'}">
+                                            <label for="gender2">여자</label>
+                                        </div>
+                                        <div class="iradio">
+                                            <input type="radio" name="gender" id="gender3" value="기타" th:checked="${member.gender == '기타'}">
+                                            <label for="gender3">기타</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 현재 거주지 -->
+                        <div class="item full">
+                            <div class="field">
+                                <div class="th">현재 거주지</div>
+                                <div class="td">
+                                    <div class="iradio_wrap">
+                                        <div class="iradio">
+                                            <input type="radio" name="residence" id="res1" value="대한민국" th:checked="${member.residence == '대한민국'}">
+                                            <label for="res1">대한민국</label>
+                                        </div>
+                                        <div class="iradio">
+                                            <input type="radio" name="residence" id="res2" value="미국" th:checked="${member.residence == '미국'}">
+                                            <label for="res2">미국</label>
+                                        </div>
+                                        <div class="iradio">
+                                            <input type="radio" name="residence" id="res3" value="기타" th:checked="${member.residence == '기타'}">
+                                            <label for="res3">기타</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 계급/직급 -->
+                        <div class="item full">
+                            <div class="field">
+                                <div class="th">현재 또는 전역 당시 계급/직급/등급</div>
+                                <div class="td">
+                                    <input type="text" name="lastRank" class="input" th:value="${member.lastRank}" maxlength="100">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 이메일 -->
+                        <div class="item">
+                            <div class="field">
+                                <div class="th">이메일 <span class="required">*</span></div>
+                                <div class="td">
+                                    <input type="email" name="email" class="input" th:value="${member.email}" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 복무 형태 -->
+                        <div class="item">
+                            <div class="field">
+                                <div class="th">한국 복무 당시 복무 형태</div>
+                                <div class="td">
+                                    <select name="serviceCategory" class="select">
+                                        <option value="">옵션선택</option>
+                                        <option value="USFK" th:selected="${member.serviceCategory == 'USFK'}">USFK</option>
+                                        <option value="KATUSA" th:selected="${member.serviceCategory == 'KATUSA'}">KATUSA</option>
+                                        <option value="CFC (ROK)" th:selected="${member.serviceCategory == 'CFC (ROK)'}">CFC (ROK)</option>
+                                        <option value="Retired MND, JCS" th:selected="${member.serviceCategory == 'Retired MND, JCS'}">Retired MND, JCS</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 소속 군 -->
+                        <div class="item">
+                            <div class="field">
+                                <div class="th">한국 복무 당시 소속 군</div>
+                                <div class="td">
+                                    <select name="serviceBranch" class="select">
+                                        <option value="">옵션선택</option>
+                                        <option value="KATUSA" th:selected="${member.serviceBranch == 'KATUSA'}">KATUSA</option>
+                                        <option value="US Army" th:selected="${member.serviceBranch == 'US Army'}">US Army</option>
+                                        <option value="US Air Force" th:selected="${member.serviceBranch == 'US Air Force'}">US Air Force</option>
+                                        <option value="US Navy" th:selected="${member.serviceBranch == 'US Navy'}">US Navy</option>
+                                        <option value="US Marine Corps" th:selected="${member.serviceBranch == 'US Marine Corps'}">US Marine Corps</option>
+                                        <option value="기타" th:selected="${member.serviceBranch == '기타'}">기타</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- 버튼 -->
+                <div class="btn_area center">
+                    <button type="submit" class="btn-submit mar">저장하기</button>
+                    <a href="#" class="btn-cancel" onclick="if(confirm('정말 회원을 탈퇴하시겠습니까?')) { location.href='/personal/withdraw'; }">회원탈퇴</a>
+                </div>
+
+            </div>
+        </div>
+    </form>
+
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+</div>
+
+<th:block th:replace="~{fragments/footer :: scripts}"></th:block>
+<script>
+function togglePasswordFields(show) {
+    document.getElementById('passwordFields').style.display = show ? 'block' : 'none';
+    if (!show) {
+        document.getElementById('newPassword').value = '';
+        document.getElementById('confirmPassword').value = '';
+    }
+}
+
+document.getElementById('profileForm').addEventListener('submit', function(e) {
+    const changePassword = document.querySelector('input[name="changePassword"]:checked').value;
+    if (changePassword === 'Y') {
+        const newPw = document.getElementById('newPassword').value;
+        const confirmPw = document.getElementById('confirmPassword').value;
+        
+        if (newPw !== confirmPw) {
+            alert('비밀번호가 일치하지 않습니다.');
+            e.preventDefault();
+            return;
+        }
+        
+        const pwRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,16}$/;
+        if (!pwRegex.test(newPw)) {
+            alert('비밀번호는 8~16자의 영문, 숫자, 특수기호를 포함해야 합니다.');
+            e.preventDefault();
+            return;
+        }
+    }
+});
+</script>
+<style>.required { color:red; }</style>
+</body>
+</html>

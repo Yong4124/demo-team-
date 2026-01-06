@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>비밀번호 찾기 - 주한미군 전역장병 채용 플랫폼</title>
+
+    <!-- CSS 파일 -->
+    <link rel="stylesheet" href="/css/reset.css">
+    <link rel="stylesheet" href="/css/common.css">
+    <link rel="stylesheet" href="/css/sub.css">
+
+    <style>
+        .login_box .email-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        .login_box .email-group .input {
+            flex: 1;
+        }
+        .login_box .email-group .fbtn {
+            flex-shrink: 0;
+            width: 120px;
+            height: 46px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #255EB8;
+            color: #fff;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 500;
+            border: none;
+            cursor: pointer;
+        }
+        .login_box .email-group .fbtn:hover {
+            background-color: #4773b7;
+        }
+    </style>
+</head>
+
+<body class="sub">
+<div class="wrapper">
+
+    <!-- Menu -->
+    <!-- TODO: 여기에 메뉴 include -->
+
+    <form name="rpForm" method="post">
+        <input type="hidden" name="SendCertiNumber" value="N">
+
+        <div class="sub_container">
+            <div class="container">
+                <div class="login_view">
+
+                    <!-- 페이지 제목 -->
+                    <div class="sub_tit mb20">비밀번호 찾기</div>
+
+                    <!-- 탭 메뉴 -->
+                    <div class="sub_tab">
+                        <a href="#" class="on">개인회원</a>
+                        <a href="/company/search-pw">기업회원</a>
+                    </div>
+
+                    <!-- 입력 폼 -->
+                    <div class="login_box">
+                        <!-- 아이디 입력 -->
+                        <div class="mar1">
+                            <input type="text"
+                                   class="input"
+                                   name="ID"
+                                   id="ID"
+                                   maxlength="100"
+                                   placeholder="아이디"
+                                   autocomplete="username">
+                        </div>
+
+                        <!-- 이름 입력 -->
+                        <div class="mar1">
+                            <input type="text"
+                                   class="input"
+                                   name="NAME"
+                                   id="NAME"
+                                   maxlength="100"
+                                   placeholder="이름"
+                                   autocomplete="name">
+                        </div>
+
+                        <!-- 이메일 입력 및 인증번호 발송 -->
+                        <div class="mar1">
+                            <div class="email-group">
+                                <input type="text"
+                                       class="input"
+                                       name="EMAIL"
+                                       id="EMAIL"
+                                       placeholder="이메일"
+                                       maxlength="100"
+                                       autocomplete="email">
+                                <a href="javascript:sendMail();" class="fbtn">인증번호 발송</a>
+                            </div>
+                        </div>
+
+                        <!-- 인증번호 입력 -->
+                        <div class="mar2">
+                            <input type="text"
+                                   class="input"
+                                   name="CERTI_NUM"
+                                   id="CERTI_NUM"
+                                   oninput="this.value = this.value.replace(/[^0-9]/g, '');"
+                                   maxlength="6"
+                                   placeholder="인증번호를 입력해주세요"
+                                   autocomplete="off">
+                        </div>
+
+                        <!-- 비밀번호 재설정 버튼 -->
+                        <div class="btn_area center">
+                            <a href="javascript:goVerifyAndNext();" class="btn-submit">비밀번호 재설정</a>
+                        </div>
+                    </div>
+
+                    <!-- 하단 링크 -->
+                    <div class="join_info">
+                        <a href="/search-id">아이디 찾기</a>
+                        <span class="bar"></span>
+                        <a href="/register">회원가입</a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <!-- TODO: 여기에 푸터 include -->
+
+    </form>
+
+</div>
+
+<script type="text/javascript">
+
+    //==================================================
+    // 인증번호 발송
+    //==================================================
+    async function sendMail() {
+        var form = document.rpForm;
+
+        // 아이디 확인
+        if ((form.ID.value).length == 0) {
+            alert('아이디를 입력해주세요.');
+            form.ID.focus();
+            return;
+        }
+
+        // 이름 확인
+        if ((form.NAME.value).length == 0) {
+            alert('이름을 입력해주세요.');
+            form.NAME.focus();
+            return;
+        }
+
+        // 이메일 확인
+        if ((form.EMAIL.value).length == 0) {
+            alert('이메일을 입력해주세요.');
+            form.EMAIL.focus();
+            return;
+        }
+
+        try {
+            // 회원 정보 확인 + 인증번호 발송
+            const response = await fetch('/api/personal/send-password-reset', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    loginId: form.ID.value,
+                    name: form.NAME.value,
+                    email: form.EMAIL.value
+                })
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                alert('인증번호가 발송되었습니다!\n\n[개발 모드]\n콘솔(IntelliJ)에서 인증번호를 확인하세요.\n\n인증번호: ' + data.code);
+                form.SendCertiNumber.value = "Y";
+
+                // 인증번호 입력란에 포커스
+                form.CERTI_NUM.focus();
+            } else {
+                alert(data.message || '회원 정보가 일치하지 않습니다.');
+            }
+
+        } catch (error) {
+            alert('인증번호 발송 중 오류가 발생했습니다.');
+            console.error(error);
+        }
+    }
+
+    //==================================================
+    // 인증 확인 후 비밀번호 재설정 페이지로 이동
+    //==================================================
+    async function goVerifyAndNext() {
+        var form = document.rpForm;
+
+        // 인증번호 발송 확인
+        if (form.SendCertiNumber.value != "Y") {
+            alert('먼저 인증번호를 발송해주세요.');
+            form.EMAIL.focus();
+            return;
+        }
+
+        // 인증번호 입력 확인
+        if ((form.CERTI_NUM.value).length == 0) {
+            alert('인증번호를 입력해주세요.');
+            form.CERTI_NUM.focus();
+            return;
+        }
+
+        // 인증번호 자릿수 확인
+        if ((form.CERTI_NUM.value).length != 6) {
+            alert('인증번호 6자리를 모두 입력해주세요.');
+            form.CERTI_NUM.focus();
+            return;
+        }
+
+        try {
+            // 인증번호 확인
+            const response = await fetch('/api/personal/verify-password-reset', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    loginId: form.ID.value,
+                    email: form.EMAIL.value,
+                    code: form.CERTI_NUM.value
+                })
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                // 인증 성공 - 비밀번호 재설정 페이지로 이동
+                // 토큰을 URL 파라미터로 전달
+                window.location.href = '/reset-pw?token=' + data.token + '&id=' + encodeURIComponent(form.ID.value);
+            } else {
+                alert(data.message || '인증번호가 일치하지 않습니다.');
+                form.CERTI_NUM.value = '';
+                form.CERTI_NUM.focus();
+            }
+
+        } catch (error) {
+            alert('인증 확인 중 오류가 발생했습니다.');
+            console.error(error);
+        }
+    }
+
+</script>
+
+</body>
+
+</html>

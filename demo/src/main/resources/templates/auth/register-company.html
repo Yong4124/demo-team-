@@ -1,152 +1,343 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/layout :: head('USFK Jobs - 기업회원 가입')}"></head>
-<body>
-<nav th:replace="~{fragments/layout :: header}"></nav>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('기업회원 가입 - 주한미군 전역장병 채용 플랫폼')}"></head>
 
-<main class="py-5">
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-8">
-                <div class="card shadow">
-                    <div class="card-header bg-success text-white">
-                        <h4 class="mb-0">
-                            <i class="bi bi-building me-2"></i>기업회원 가입
-                        </h4>
+<body class="sub">
+<div class="wrapper">
+
+    <!-- Header -->
+    <th:block th:replace="~{fragments/header :: header}"></th:block>
+
+    <form id="registerForm" th:action="@{/auth/register/company}" method="post">
+        <div class="sub_container">
+            <div class="container">
+                <div class="job_view">
+                    <div class="sub_tit mb20">회원가입</div>
+
+                    <div class="sub_tab">
+                        <a th:href="@{/auth/register/personal}">개인회원</a>
+                        <a href="#" class="on">기업회원</a>
                     </div>
-                    <div class="card-body p-4">
-                        <form th:action="@{/auth/register/company}" method="post" th:object="${registerDto}">
-                            
-                            <!-- 계정 정보 -->
-                            <h5 class="mb-3 text-success"><i class="bi bi-key me-2"></i>계정 정보</h5>
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <label for="loginId" class="form-label">아이디 <span class="text-danger">*</span></label>
-                                    <div class="input-group">
-                                        <input type="text" class="form-control" id="loginId" th:field="*{loginId}" 
-                                               th:classappend="${#fields.hasErrors('loginId')} ? 'is-invalid'" required>
-                                        <button type="button" class="btn btn-outline-secondary" onclick="checkDuplicateId('company')">중복확인</button>
+
+                    <!-- 에러 메시지 -->
+                    <div th:if="${error}" class="alert" style="background:#ffe0e0; padding:15px; border-radius:10px; margin:20px 0; text-align:center;">
+                        <span style="color:#c00;" th:text="${error}">에러 메시지</span>
+                    </div>
+
+                    <div class="join_box">
+                        <div class="join_form">
+
+                            <!-- 섹션: 담당자 정보 -->
+                            <div class="section_title" style="font-size:20px; font-weight:700; margin:30px 0 20px; padding-bottom:10px; border-bottom:2px solid #255EB8;">담당자 정보</div>
+
+                            <!-- 아이디 -->
+                            <div class="item">
+                                <div class="field">
+                                    <div class="th">아이디 <span class="required">*</span></div>
+                                    <div class="td">
+                                        <div class="filebtn">
+                                            <div class="filebtn_in">
+                                                <input type="text" class="input" name="loginId" id="loginId" 
+                                                       placeholder="6자 이상의 영문, 숫자" maxlength="50" required>
+                                                <a href="#" class="fbtn noplus" onclick="checkDuplicate(); return false;">중복확인</a>
+                                            </div>
+                                        </div>
+                                        <input type="hidden" id="idChecked" value="N">
                                     </div>
-                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('loginId')}" th:errors="*{loginId}"></div>
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="email" class="form-label">이메일 <span class="text-danger">*</span></label>
-                                    <input type="email" class="form-control" id="email" th:field="*{email}" 
-                                           th:classappend="${#fields.hasErrors('email')} ? 'is-invalid'" required>
-                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
-                                </div>
-                            </div>
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <label for="password" class="form-label">비밀번호 <span class="text-danger">*</span></label>
-                                    <input type="password" class="form-control" id="password" th:field="*{password}" 
-                                           th:classappend="${#fields.hasErrors('password')} ? 'is-invalid'" required>
-                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="passwordConfirm" class="form-label">비밀번호 확인 <span class="text-danger">*</span></label>
-                                    <input type="password" class="form-control" id="passwordConfirm" th:field="*{passwordConfirm}" 
-                                           th:classappend="${#fields.hasErrors('passwordConfirm')} ? 'is-invalid'" required>
-                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('passwordConfirm')}" th:errors="*{passwordConfirm}"></div>
                                 </div>
                             </div>
 
-                            <hr class="my-4">
-
-                            <!-- 담당자 정보 -->
-                            <h5 class="mb-3 text-success"><i class="bi bi-person me-2"></i>담당자 정보</h5>
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <label for="managerName" class="form-label">담당자명 <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" id="managerName" th:field="*{managerName}" 
-                                           th:classappend="${#fields.hasErrors('managerName')} ? 'is-invalid'" required>
-                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('managerName')}" th:errors="*{managerName}"></div>
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="department" class="form-label">부서명</label>
-                                    <input type="text" class="form-control" id="department" th:field="*{department}">
-                                </div>
-                            </div>
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <label for="phone" class="form-label">전화번호 <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" id="phone" th:field="*{phone}" 
-                                           th:classappend="${#fields.hasErrors('phone')} ? 'is-invalid'" placeholder="010-0000-0000" required>
-                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}"></div>
+                            <!-- 담당자명 -->
+                            <div class="item">
+                                <div class="field">
+                                    <div class="th">담당자명 <span class="required">*</span></div>
+                                    <div class="td">
+                                        <input type="text" name="managerName" id="managerName" class="input" placeholder="담당자 이름" maxlength="100" required>
+                                    </div>
                                 </div>
                             </div>
 
-                            <hr class="my-4">
-
-                            <!-- 기업 정보 -->
-                            <h5 class="mb-3 text-success"><i class="bi bi-building me-2"></i>기업 정보</h5>
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <label for="company" class="form-label">회사명 <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" id="company" th:field="*{company}" 
-                                           th:classappend="${#fields.hasErrors('company')} ? 'is-invalid'" required>
-                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('company')}" th:errors="*{company}"></div>
+                            <!-- 비밀번호 -->
+                            <div class="item">
+                                <div class="field">
+                                    <div class="th">비밀번호 <span class="required">*</span></div>
+                                    <div class="td">
+                                        <input type="password" name="password" id="password" class="input" 
+                                               placeholder="8~16자의 영문, 숫자, 특수기호" maxlength="16" required>
+                                    </div>
                                 </div>
-                                <div class="col-md-6">
-                                    <label for="presidentName" class="form-label">대표자명 <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" id="presidentName" th:field="*{presidentName}" 
-                                           th:classappend="${#fields.hasErrors('presidentName')} ? 'is-invalid'" required>
-                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('presidentName')}" th:errors="*{presidentName}"></div>
-                                </div>
-                            </div>
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <label for="businessRegistNum" class="form-label">사업자번호 <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" id="businessRegistNum" th:field="*{businessRegistNum}" 
-                                           th:classappend="${#fields.hasErrors('businessRegistNum')} ? 'is-invalid'" 
-                                           placeholder="000-00-00000" required>
-                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('businessRegistNum')}" th:errors="*{businessRegistNum}"></div>
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="parentCompanyCd" class="form-label">그룹사</label>
-                                    <select class="form-select" id="parentCompanyCd" th:field="*{parentCompanyCd}">
-                                        <option value="">선택 (해당없음)</option>
-                                        <option value="1">삼성</option>
-                                        <option value="2">SK</option>
-                                        <option value="3">현대자동차그룹</option>
-                                        <option value="4">LG</option>
-                                        <option value="5">롯데</option>
-                                        <option value="6">한화</option>
-                                        <option value="7">LS</option>
-                                        <option value="8">DL</option>
-                                        <option value="9">두산</option>
-                                        <option value="10">한국타이어</option>
-                                        <option value="11">효성</option>
-                                        <option value="12">금호타이어</option>
-                                        <option value="13">솔브레인</option>
-                                        <option value="14">SD바이오센서</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="mb-3">
-                                <label for="companyAddress" class="form-label">회사주소 (본사)</label>
-                                <textarea class="form-control" id="companyAddress" th:field="*{companyAddress}" rows="2"></textarea>
                             </div>
 
-                            <hr class="my-4">
-
-                            <div class="d-grid gap-2">
-                                <button type="submit" class="btn btn-success btn-lg">
-                                    <i class="bi bi-building-add me-2"></i>회원가입
-                                </button>
-                                <a th:href="@{/auth/register}" class="btn btn-outline-secondary">
-                                    <i class="bi bi-arrow-left me-2"></i>돌아가기
-                                </a>
+                            <!-- 비밀번호 확인 -->
+                            <div class="item">
+                                <div class="field">
+                                    <div class="th">비밀번호 확인 <span class="required">*</span></div>
+                                    <div class="td">
+                                        <input type="password" name="passwordConfirm" id="passwordConfirm" class="input" maxlength="16" required>
+                                    </div>
+                                </div>
                             </div>
-                        </form>
+
+                            <!-- 이메일 -->
+                            <div class="item">
+                                <div class="field">
+                                    <div class="th">이메일 <span class="required">*</span></div>
+                                    <div class="td">
+                                        <input type="email" name="email" id="email" class="input" placeholder="example@company.com" required>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 전화번호 -->
+                            <div class="item">
+                                <div class="field">
+                                    <div class="th">전화번호 <span class="required">*</span></div>
+                                    <div class="td">
+                                        <input type="tel" name="phone" id="phone" class="input" placeholder="000-0000-0000" required>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 섹션: 기업 정보 -->
+                            <div class="section_title" style="font-size:20px; font-weight:700; margin:40px 0 20px; padding-bottom:10px; border-bottom:2px solid #255EB8;">기업 정보</div>
+
+                            <!-- 회사명 -->
+                            <div class="item">
+                                <div class="field">
+                                    <div class="th">회사명 <span class="required">*</span></div>
+                                    <div class="td">
+                                        <input type="text" name="company" id="company" class="input" placeholder="회사명" maxlength="200" required>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 그룹사 -->
+                            <div class="item">
+                                <div class="field">
+                                    <div class="th">그룹사</div>
+                                    <div class="td">
+                                        <select name="groupCompany" class="select">
+                                            <option value="">선택</option>
+                                            <option value="삼성">삼성</option>
+                                            <option value="SK">SK</option>
+                                            <option value="현대">현대</option>
+                                            <option value="LG">LG</option>
+                                            <option value="롯데">롯데</option>
+                                            <option value="한화">한화</option>
+                                            <option value="LS">LS</option>
+                                            <option value="DL">DL</option>
+                                            <option value="두산">두산</option>
+                                            <option value="기타">기타</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 기업구분 -->
+                            <div class="item">
+                                <div class="field">
+                                    <div class="th">기업구분</div>
+                                    <div class="td">
+                                        <select name="companyType" class="select">
+                                            <option value="">선택</option>
+                                            <option value="대기업">대기업</option>
+                                            <option value="중견기업">중견기업</option>
+                                            <option value="중소기업">중소기업</option>
+                                            <option value="스타트업">스타트업</option>
+                                            <option value="외국계">외국계</option>
+                                            <option value="공기업">공기업</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 업종 -->
+                            <div class="item">
+                                <div class="field">
+                                    <div class="th">업종</div>
+                                    <div class="td">
+                                        <input type="text" name="industry" class="input" placeholder="예: 반도체, 자동차, IT" maxlength="100">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 설립일 -->
+                            <div class="item">
+                                <div class="field">
+                                    <div class="th">설립일</div>
+                                    <div class="td">
+                                        <input type="text" name="establishedDate" class="input" placeholder="YYYY-MM-DD" maxlength="20">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 사원수 -->
+                            <div class="item">
+                                <div class="field">
+                                    <div class="th">사원수</div>
+                                    <div class="td">
+                                        <input type="text" name="employeeNum" class="input" placeholder="예: 1,000명" maxlength="50">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 자본금 -->
+                            <div class="item">
+                                <div class="field">
+                                    <div class="th">자본금</div>
+                                    <div class="td">
+                                        <input type="text" name="capital" class="input" placeholder="예: 100억원" maxlength="50">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 매출액 -->
+                            <div class="item">
+                                <div class="field">
+                                    <div class="th">매출액</div>
+                                    <div class="td">
+                                        <input type="text" name="revenue" class="input" placeholder="예: 1,000억원" maxlength="50">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 홈페이지 -->
+                            <div class="item full">
+                                <div class="field">
+                                    <div class="th">홈페이지</div>
+                                    <div class="td">
+                                        <input type="url" name="homepage" class="input" placeholder="https://www.example.com" maxlength="200">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 회사 주소 -->
+                            <div class="item full">
+                                <div class="field">
+                                    <div class="th">회사 주소</div>
+                                    <div class="td">
+                                        <input type="text" name="address" class="input" placeholder="회사 주소" maxlength="300">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 개인정보 동의 -->
+                            <div class="agree_wrap">
+                                <div class="agree_box">
+                                    <div class="agree_tit">
+                                        <input type="checkbox" id="agreeAll" onchange="toggleAll(this)">
+                                        <label for="agreeAll">전체 동의</label>
+                                    </div>
+                                </div>
+                                <div class="agree_box">
+                                    <div class="agree_item">
+                                        <input type="checkbox" name="agreeTerms" id="agreeTerms" required>
+                                        <label for="agreeTerms">[필수] 이용약관 동의</label>
+                                    </div>
+                                    <div class="agree_item">
+                                        <input type="checkbox" name="agreePrivacy" id="agreePrivacy" required>
+                                        <label for="agreePrivacy">[필수] 개인정보 수집 및 이용 동의</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
                     </div>
+
+                    <!-- 버튼 -->
+                    <div class="btn_area center">
+                        <button type="submit" class="btn-submit mar">가입하기</button>
+                        <a th:href="@{/}" class="btn-cancel">취소</a>
+                    </div>
+
                 </div>
             </div>
         </div>
-    </div>
-</main>
+    </form>
 
-<footer th:replace="~{fragments/layout :: footer}"></footer>
-<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+    <!-- Footer -->
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+
+</div>
+
+<!-- Scripts -->
+<th:block th:replace="~{fragments/footer :: scripts}"></th:block>
+<script>
+// 아이디 중복 확인
+function checkDuplicate() {
+    const loginId = document.getElementById('loginId').value;
+    
+    if (loginId.length < 6) {
+        alert('아이디는 6자 이상이어야 합니다.');
+        return;
+    }
+    
+    const idRegex = /^[A-Za-z0-9]{6,}$/;
+    if (!idRegex.test(loginId)) {
+        alert('아이디는 6자 이상의 영문, 숫자만 사용 가능합니다.');
+        return;
+    }
+    
+    fetch('/auth/check-id?loginId=' + encodeURIComponent(loginId) + '&type=company')
+        .then(response => response.json())
+        .then(data => {
+            if (data.available) {
+                alert('사용 가능한 아이디입니다.');
+                document.getElementById('idChecked').value = 'Y';
+            } else {
+                alert('이미 사용중인 아이디입니다.');
+                document.getElementById('idChecked').value = 'N';
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('중복 확인 중 오류가 발생했습니다.');
+        });
+}
+
+// 전체 동의
+function toggleAll(checkbox) {
+    document.getElementById('agreeTerms').checked = checkbox.checked;
+    document.getElementById('agreePrivacy').checked = checkbox.checked;
+}
+
+// 폼 제출 전 검증
+document.getElementById('registerForm').addEventListener('submit', function(e) {
+    const password = document.getElementById('password').value;
+    const passwordConfirm = document.getElementById('passwordConfirm').value;
+    const idChecked = document.getElementById('idChecked').value;
+    
+    // 아이디 중복확인
+    if (idChecked !== 'Y') {
+        alert('아이디 중복확인을 해주세요.');
+        e.preventDefault();
+        return;
+    }
+    
+    // 비밀번호 확인
+    if (password !== passwordConfirm) {
+        alert('비밀번호가 일치하지 않습니다.');
+        e.preventDefault();
+        return;
+    }
+    
+    // 비밀번호 형식 확인
+    const pwRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,16}$/;
+    if (!pwRegex.test(password)) {
+        alert('비밀번호는 8~16자의 영문, 숫자, 특수기호를 포함해야 합니다.');
+        e.preventDefault();
+        return;
+    }
+});
+</script>
+
+<style>
+.required { color: #ff0000; }
+.agree_wrap { margin-top: 30px; border-top: 1px solid #eee; padding-top: 30px; }
+.agree_box { margin-bottom: 15px; }
+.agree_tit { font-size: 18px; font-weight: 600; }
+.agree_item { margin: 10px 0; padding-left: 20px; }
+</style>
+
 </body>
 </html>

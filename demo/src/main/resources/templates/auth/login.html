@@ -1,71 +1,103 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/layout :: head('USFK Jobs - 로그인')}"></head>
-<body>
-<nav th:replace="~{fragments/layout :: header}"></nav>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('로그인 - 주한미군 전역장병 채용 플랫폼')}"></head>
 
-<main class="py-5">
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-5">
-                <div class="card shadow">
-                    <div class="card-body p-5">
-                        <h3 class="text-center mb-4">
-                            <i class="bi bi-person-circle text-primary me-2"></i>로그인
-                        </h3>
-                        
-                        <!-- 성공 메시지 (회원가입 완료) -->
-                        <div class="alert alert-success" th:if="${successMessage}">
-                            <i class="bi bi-check-circle me-2"></i>
-                            <span th:text="${successMessage}">성공 메시지</span>
+<body class="sub">
+<div class="wrapper">
+
+    <!-- Header -->
+    <th:block th:replace="~{fragments/header :: header}"></th:block>
+
+    <div class="sub_container">
+        <div class="container">
+            <div class="login_view">
+                <div class="sub_tit mb20">로그인</div>
+                
+                <!-- 탭 -->
+                <div class="sub_tab">
+                    <a href="#" class="on" id="tabPersonal" onclick="switchTab('personal'); return false;">개인회원</a>
+                    <a href="#" id="tabCompany" onclick="switchTab('company'); return false;">기업회원</a>
+                </div>
+
+                <!-- 에러 메시지 -->
+                <div th:if="${param.error}" class="alert alert-danger" style="background:#ffe0e0; padding:15px; border-radius:10px; margin-bottom:20px; text-align:center;">
+                    <span style="color:#c00;">아이디 또는 비밀번호가 올바르지 않습니다.</span>
+                </div>
+                
+                <div th:if="${param.logout}" class="alert alert-success" style="background:#e0ffe0; padding:15px; border-radius:10px; margin-bottom:20px; text-align:center;">
+                    <span style="color:#060;">로그아웃 되었습니다.</span>
+                </div>
+
+                <!-- 개인회원 로그인 -->
+                <form id="personalForm" th:action="@{/auth/login}" method="post">
+                    <input type="hidden" name="memberType" value="personal"/>
+                    <div class="login_box">
+                        <div class="mar1">
+                            <input type="text" class="input" name="username" placeholder="아이디" required>
                         </div>
-                        
-                        <!-- 에러 메시지 -->
-                        <div class="alert alert-danger" th:if="${errorMessage}">
-                            <i class="bi bi-exclamation-triangle me-2"></i>
-                            <span th:text="${errorMessage}">에러 메시지</span>
+                        <div class="mar2">
+                            <input type="password" class="input" name="password" placeholder="비밀번호" required>
                         </div>
-                        
-                        <!-- 로그아웃 메시지 -->
-                        <div class="alert alert-info" th:if="${logoutMessage}">
-                            <i class="bi bi-box-arrow-right me-2"></i>
-                            <span th:text="${logoutMessage}">로그아웃 메시지</span>
-                        </div>
-                        
-                        <form th:action="@{/auth/login-process}" method="post">
-                            <div class="mb-3">
-                                <label for="loginId" class="form-label">아이디</label>
-                                <input type="text" class="form-control" id="loginId" name="loginId" 
-                                       placeholder="아이디를 입력하세요" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="password" class="form-label">비밀번호</label>
-                                <input type="password" class="form-control" id="password" name="password" 
-                                       placeholder="비밀번호를 입력하세요" required>
-                            </div>
-                            <div class="d-grid gap-2">
-                                <button type="submit" class="btn btn-primary btn-lg">
-                                    <i class="bi bi-box-arrow-in-right me-2"></i>로그인
-                                </button>
-                            </div>
-                        </form>
-                        
-                        <hr class="my-4">
-                        
-                        <div class="text-center">
-                            <p class="mb-2">아직 회원이 아니신가요?</p>
-                            <a th:href="@{/auth/register}" class="btn btn-outline-primary">
-                                <i class="bi bi-person-plus me-2"></i>회원가입
-                            </a>
+                        <div class="btn_area center">
+                            <button type="submit" class="btn-submit">로그인</button>
                         </div>
                     </div>
+                </form>
+
+                <!-- 기업회원 로그인 (숨김) -->
+                <form id="companyForm" th:action="@{/auth/login}" method="post" style="display:none;">
+                    <input type="hidden" name="memberType" value="company"/>
+                    <div class="login_box">
+                        <div class="mar1">
+                            <input type="text" class="input" name="username" placeholder="아이디" required>
+                        </div>
+                        <div class="mar2">
+                            <input type="password" class="input" name="password" placeholder="비밀번호" required>
+                        </div>
+                        <div class="btn_area center">
+                            <button type="submit" class="btn-submit">로그인</button>
+                        </div>
+                    </div>
+                </form>
+
+                <div class="join_info">
+                    <a th:href="@{/auth/find-id}">아이디 찾기</a>
+                    <span class="bar"></span>
+                    <a th:href="@{/auth/find-pw}">비밀번호 찾기</a>
+                    <span class="bar"></span>
+                    <a th:href="@{/auth/register}">회원가입</a>
                 </div>
             </div>
         </div>
     </div>
-</main>
 
-<footer th:replace="~{fragments/layout :: footer}"></footer>
-<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+    <!-- Footer -->
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+
+</div>
+
+<!-- Scripts -->
+<th:block th:replace="~{fragments/footer :: scripts}"></th:block>
+<script>
+function switchTab(type) {
+    const tabPersonal = document.getElementById('tabPersonal');
+    const tabCompany = document.getElementById('tabCompany');
+    const formPersonal = document.getElementById('personalForm');
+    const formCompany = document.getElementById('companyForm');
+    
+    if (type === 'personal') {
+        tabPersonal.classList.add('on');
+        tabCompany.classList.remove('on');
+        formPersonal.style.display = 'block';
+        formCompany.style.display = 'none';
+    } else {
+        tabPersonal.classList.remove('on');
+        tabCompany.classList.add('on');
+        formPersonal.style.display = 'none';
+        formCompany.style.display = 'block';
+    }
+}
+</script>
+
 </body>
 </html>

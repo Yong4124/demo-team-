@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>아이디 찾기 - 주한미군 전역장병 채용 플랫폼</title>
+
+    <!-- CSS 파일 -->
+    <link rel="stylesheet" href="/css/reset.css">
+    <link rel="stylesheet" href="/css/common.css">
+    <link rel="stylesheet" href="/css/sub.css">
+</head>
+
+<body class="sub">
+<div class="wrapper">
+
+    <!-- ========================================
+         헤더 및 메뉴 영역 (추후 추가)
+         ======================================== -->
+    <!-- TODO: 여기에 메뉴 include -->
+
+    <!-- ========================================
+         아이디 찾기 폼
+         ======================================== -->
+    <form name="rpForm" method="post">
+
+        <div class="sub_container">
+            <div class="container">
+                <div class="login_view">
+
+                    <!-- 페이지 제목 -->
+                    <div class="sub_tit mb20">아이디 찾기</div>
+
+                    <!-- 탭 메뉴 -->
+                    <div class="sub_tab">
+                        <a href="#" class="on">개인회원</a>
+                        <a href="/company/search-id">기업회원</a>
+                    </div>
+
+                    <!-- 입력 폼 -->
+                    <div class="login_box">
+                        <!-- 이름 입력 -->
+                        <div class="mar1">
+                            <input type="text"
+                                   class="input"
+                                   name="NAME"
+                                   id="NAME"
+                                   maxlength="100"
+                                   placeholder="이름">
+                        </div>
+
+                        <!-- 이메일 입력 -->
+                        <div class="mar2">
+                            <input type="text"
+                                   class="input"
+                                   name="EMAIL"
+                                   id="EMAIL"
+                                   maxlength="100"
+                                   placeholder="이메일"
+                                   onkeypress="return handleEnter(this, event)">
+                        </div>
+
+                        <!-- 아이디 찾기 버튼 -->
+                        <div class="btn_area center">
+                            <a href="javascript:goSearchAct();" class="btn-submit">아이디 찾기</a>
+                        </div>
+                    </div>
+
+                    <!-- 하단 링크 -->
+                    <div class="join_info">
+                        <a href="/search-pw.html">비밀번호 찾기</a>
+                        <span class="bar"></span>
+                        <a href="/register.html">회원가입</a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================
+             푸터 영역 (추후 추가)
+             ======================================== -->
+        <!-- TODO: 여기에 푸터 include -->
+
+    </form>
+
+</div>
+
+<!-- ========================================
+     JavaScript
+     ======================================== -->
+<script type="text/javascript">
+
+    //==================================================
+    // Enter 키 처리
+    //==================================================
+    function handleEnter(field, event) {
+        var keyCode = event.keyCode ? event.keyCode : event.which ? event.which : event.charCode;
+        if (keyCode == 13) {
+            goSearchAct();
+        } else return true;
+    }
+
+    //==================================================
+    // 아이디 찾기
+    //==================================================
+    async function goSearchAct() {
+        var form = document.rpForm;
+
+        // 이름 입력 확인
+        if ((form.NAME.value).length == 0) {
+            alert('이름을 입력해주세요.');
+            form.NAME.focus();
+            return;
+        }
+
+        // 이메일 입력 확인
+        if ((form.EMAIL.value).length == 0) {
+            alert('이메일을 입력해주세요.');
+            form.EMAIL.focus();
+            return;
+        }
+
+        try {
+            // 아이디 찾기 API 호출
+            const response = await fetch('/api/personal/find-id', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    name: form.NAME.value,
+                    email: form.EMAIL.value
+                })
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                // 찾은 아이디 표시
+                alert('회원님의 아이디는 "' + data.loginId + '" 입니다.');
+
+                // 로그인 페이지로 이동
+                if (confirm('로그인 페이지로 이동하시겠습니까?')) {
+                    window.location.href = '/login.html';
+                }
+            } else {
+                alert(data.message || '일치하는 회원 정보가 없습니다.');
+            }
+
+        } catch (error) {
+            alert('아이디 찾기 중 오류가 발생했습니다.');
+            console.error(error);
+        }
+    }
+
+</script>
+</body>
+</html>

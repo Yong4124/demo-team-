@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('기업 마이페이지 - 주한미군 전역장병 채용 플랫폼')}"></head>
+
+<body class="sub">
+<div class="wrapper">
+
+    <th:block th:replace="~{fragments/header :: header}"></th:block>
+
+    <div class="sub_container">
+        <div class="container">
+
+            <div th:replace="~{company/fragments/sidebar :: sidebar('dashboard')}"></div>
+
+            <div class="sub_tit mb20">기업 마이페이지</div>
+            <div class="sub_txt mb60">환영합니다, <span th:text="${member.company}">회사명</span>님!</div>
+
+            <!-- 대시보드 카드 -->
+            <div class="dashboard_wrap" style="display:grid; grid-template-columns:repeat(3, 1fr); gap:30px; margin-bottom:60px;">
+                
+                <div class="dash_card" style="background:#f8f9fa; border-radius:20px; padding:30px; text-align:center;">
+                    <div class="icon" style="font-size:40px; margin-bottom:15px;">📋</div>
+                    <div class="title" style="font-size:18px; font-weight:600; margin-bottom:10px;">진행중 공고</div>
+                    <div class="count" style="font-size:36px; font-weight:700; color:#255EB8;" th:text="${activeJobCount}">0</div>
+                    <a th:href="@{/company/jobs}" style="display:inline-block; margin-top:15px; color:#666;">자세히 보기 →</a>
+                </div>
+
+                <div class="dash_card" style="background:#f8f9fa; border-radius:20px; padding:30px; text-align:center;">
+                    <div class="icon" style="font-size:40px; margin-bottom:15px;">👥</div>
+                    <div class="title" style="font-size:18px; font-weight:600; margin-bottom:10px;">총 지원자</div>
+                    <div class="count" style="font-size:36px; font-weight:700; color:#255EB8;" th:text="${totalApplicants}">0</div>
+                    <a th:href="@{/company/applicants}" style="display:inline-block; margin-top:15px; color:#666;">자세히 보기 →</a>
+                </div>
+
+                <div class="dash_card" style="background:#f8f9fa; border-radius:20px; padding:30px; text-align:center;">
+                    <div class="icon" style="font-size:40px; margin-bottom:15px;">📊</div>
+                    <div class="title" style="font-size:18px; font-weight:600; margin-bottom:10px;">전체 공고</div>
+                    <div class="count" style="font-size:36px; font-weight:700; color:#255EB8;" th:text="${totalJobCount}">0</div>
+                    <a th:href="@{/company/jobs}" style="display:inline-block; margin-top:15px; color:#666;">자세히 보기 →</a>
+                </div>
+
+            </div>
+
+            <!-- 최근 지원자 -->
+            <div class="sub_stit mb30">최근 지원자</div>
+            <div class="table_wrap mb60">
+                <table class="data_table">
+                    <colgroup>
+                        <col width="10%"><col width="15%"><col width="*"><col width="15%"><col width="15%">
+                    </colgroup>
+                    <thead>
+                        <tr><th>번호</th><th>지원자</th><th>공고명</th><th>지원일</th><th>상태</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="app, stat : ${recentApplicants}">
+                            <td th:text="${stat.count}">1</td>
+                            <td th:text="${app.personalMember?.firstName}">홍길동</td>
+                            <td><a th:href="@{/company/applicants}" th:text="${app.jobPosting?.title}">공고제목</a></td>
+                            <td th:text="${#temporals.format(app.createdAt, 'yyyy-MM-dd')}">2025-01-01</td>
+                            <td><span class="badge" th:text="${app.status ?: '접수'}">접수</span></td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(recentApplicants)}">
+                            <td colspan="5" style="text-align:center; padding:40px;">최근 지원자가 없습니다.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+</div>
+<th:block th:replace="~{fragments/footer :: scripts}"></th:block>
+<style>
+.data_table { width:100%; border-collapse:collapse; }
+.data_table th, .data_table td { padding:15px; border-bottom:1px solid #eee; text-align:center; }
+.data_table th { background:#f8f9fa; font-weight:600; }
+.data_table td a { color:#333; }
+.data_table td a:hover { color:#255EB8; }
+.badge { display:inline-block; padding:5px 12px; border-radius:20px; font-size:13px; background:#e0e0e0; }
+</style>
+</body>
+</html>

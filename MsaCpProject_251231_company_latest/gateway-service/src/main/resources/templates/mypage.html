@@ -1,0 +1,1027 @@
+<!doctype html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>회원정보관리 - 주한미군 전역장병 채용 플랫폼</title>
+
+    <!-- CSS 파일 -->
+    <link rel="stylesheet" href="/css/reset.css">
+    <link rel="stylesheet" href="/css/common.css">
+    <link rel="stylesheet" href="/css/sub.css">
+
+    <style>
+        /* 날짜 입력 필드 스타일 */
+        input[type="date"] {
+            width: 100%;
+            padding: 10px;
+            font-size: 14px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        input[type="date"]::-webkit-calendar-picker-indicator {
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        /* ✅ 체크박스/라디오 버튼 완전히 재정의 - 절대적 우선순위! */
+        input[type="checkbox"],
+        input[type="radio"] {
+            /* 기본 스타일 강제 적용 */
+            -webkit-appearance: auto !important;
+            -moz-appearance: auto !important;
+            appearance: auto !important;
+
+            /* 표시 관련 */
+            display: inline-block !important;
+            opacity: 1 !important;
+            visibility: visible !important;
+
+            /* 위치 관련 */
+            position: relative !important;
+
+            /* 크기 관련 */
+            width: 16px !important;
+            height: 16px !important;
+            min-width: 16px !important;
+            min-height: 16px !important;
+
+            /* 여백 관련 */
+            margin: 0 8px 0 0 !important;
+            padding: 0 !important;
+
+            /* 기타 */
+            cursor: pointer !important;
+            border: 1px solid #999 !important;
+            background: white !important;
+            vertical-align: middle !important;
+        }
+
+        /* ✅ 라벨 스타일도 완전히 재정의 */
+        .icheck label,
+        .iradio label {
+            display: inline !important;
+            position: relative !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            cursor: pointer !important;
+            background: none !important;
+            background-image: none !important;
+            font-size: 14px !important;
+            vertical-align: middle !important;
+        }
+
+        /* ✅ 가상 요소 제거 */
+        .icheck label::before,
+        .icheck label::after,
+        .iradio label::before,
+        .iradio label::after {
+            display: none !important;
+            content: none !important;
+        }
+
+        /* ✅ 체크박스/라디오 그룹 스타일 */
+        .icheck_wrap,
+        .iradio_wrap {
+            display: flex !important;
+            flex-wrap: wrap !important;
+            gap: 10px !important;
+        }
+
+        .icheck,
+        .iradio {
+            display: inline-flex !important;
+            align-items: center !important;
+            margin-right: 15px !important;
+            margin-bottom: 10px !important;
+        }
+
+        /* 복무 연도/주둔지 래퍼 */
+        .year_wrap {
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 4px;
+        }
+
+        /* 이름 필드 */
+        .name_wrap {
+            display: flex;
+            gap: 10px;
+        }
+
+        .name_wrap .last_nm,
+        .name_wrap .first_nm {
+            flex: 1;
+        }
+    </style>
+</head>
+
+<body class="sub">
+<div class="wrapper">
+
+    <!-- Menu -->
+    <!-- TODO: 여기에 메뉴 include -->
+
+    <form name="rpForm" method="post">
+        <!-- Hidden Fields -->
+        <input type="hidden" name="userIdIdx" value="N">
+        <input type="hidden" name="SendCertiNumber" value="">
+        <input type="hidden" name="PW" id="PW" value="">
+        <input type="hidden" name="GENDER" id="GENDER" value="">
+        <input type="hidden" name="RESIDENCE" id="RESIDENCE" value="">
+        <input type="hidden" name="SERVICE_CATEGORY" id="SERVICE_CATEGORY" value="">
+        <input type="hidden" name="SERVICE_BRANCH" id="SERVICE_BRANCH" value="">
+        <input type="hidden" name="SERVICE_YEAR" id="SERVICE_YEAR" value="">
+        <input type="hidden" name="SERVICE_STATION" id="SERVICE_STATION" value="">
+
+        <div class="sub_container">
+            <div class="container">
+
+                <!-- 페이지 제목 -->
+                <div class="sub_tit mb20">회원정보관리</div>
+                <div class="sub_txt mb60">회원님의 정보를 수정·확인하실 수 있습니다. (이름, 생년월일 변경 불가)</div>
+
+                <!-- 회원정보 섹션 -->
+                <div class="sub_stit mb30">회원정보</div>
+                <div class="join_box only">
+                    <div class="join_form">
+
+                        <!-- 아이디 (수정 불가) -->
+                        <div class="item">
+                            <div class="field">
+                                <div class="th">아이디</div>
+                                <div class="td">
+                                    <div class="filebtn">
+                                        <div class="filebtn_in">
+                                            <input type="text"
+                                                   class="input"
+                                                   name="ID"
+                                                   id="ID"
+                                                   maxlength="100"
+                                                   readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 이름 (수정 불가) -->
+                        <div class="item">
+                            <div class="field">
+                                <div class="th">이름</div>
+                                <div class="td">
+                                    <input type="text"
+                                           name="NAME"
+                                           id="NAME"
+                                           class="input"
+                                           placeholder="이름"
+                                           maxlength="500"
+                                           readonly>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 비밀번호 변경 여부 -->
+                        <div class="item full">
+                            <div class="field">
+                                <div class="th">
+                                    <div class="icheck">
+                                        <div class="th">비밀번호를 수정하시겠습니까?
+                                            <div class="iradio_wrap">
+                                                <div class="iradio">
+                                                    <input type="radio"
+                                                           name="PW_AGREE"
+                                                           id="PW_AGREE1"
+                                                           value="1">
+                                                    <label for="PW_AGREE1">예</label>
+                                                </div>
+                                                <div class="iradio">
+                                                    <input type="radio"
+                                                           name="PW_AGREE"
+                                                           id="PW_AGREE2"
+                                                           value="2"
+                                                           checked>
+                                                    <label for="PW_AGREE2">아니오</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 비밀번호 -->
+                        <div class="item">
+                            <div class="field">
+                                <div class="th">비밀번호</div>
+                                <div class="td">
+                                    <input type="password"
+                                           name="PW1"
+                                           id="PW1"
+                                           class="input"
+                                           placeholder="8~16자의 영문, 숫자, 특수기호"
+                                           onkeyup="noSpaceForm(this);"
+                                           onchange="noSpaceForm(this);"
+                                           maxlength="16">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 비밀번호 확인 -->
+                        <div class="item">
+                            <div class="field">
+                                <div class="th">비밀번호 확인</div>
+                                <div class="td">
+                                    <input type="password"
+                                           name="PW2"
+                                           id="PW2"
+                                           class="input"
+                                           onkeyup="noSpaceForm(this);"
+                                           onchange="noSpaceForm(this);"
+                                           maxlength="16">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 생년월일 (수정 불가) -->
+                        <div class="item">
+                            <div class="field">
+                                <div class="th">생년월일</div>
+                                <div class="td">
+                                    <input type="date"
+                                           name="BIRTH_DATE"
+                                           id="BIRTH_DATE"
+                                           class="input"
+                                           max="9999-12-31"
+                                           readonly>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 성별 -->
+                        <div class="item">
+                            <div class="field">
+                                <div class="th">성별</div>
+                                <div class="td">
+                                    <div class="iradio_wrap">
+                                        <div class="iradio">
+                                            <input type="radio" name="P_GENDER" id="GENDER1" value="1">
+                                            <label for="GENDER1">남자</label>
+                                        </div>
+                                        <div class="iradio">
+                                            <input type="radio" name="P_GENDER" id="GENDER2" value="2">
+                                            <label for="GENDER2">여자</label>
+                                        </div>
+                                        <div class="iradio">
+                                            <input type="radio" name="P_GENDER" id="GENDER3" value="3">
+                                            <label for="GENDER3">기타</label>
+                                        </div>
+                                        <div class="iradio">
+                                            <input type="radio" name="P_GENDER" id="GENDER4" value="4">
+                                            <label for="GENDER4">무응답</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 현재 거주지 -->
+                        <div class="item full">
+                            <div class="field">
+                                <div class="th">현재 거주지</div>
+                                <div class="td">
+                                    <div class="iradio_wrap">
+                                        <div class="iradio">
+                                            <input type="radio" name="P_RESIDENCE" id="RESIDENCE1" value="1">
+                                            <label for="RESIDENCE1">기타</label>
+                                        </div>
+                                        <div class="iradio">
+                                            <input type="radio" name="P_RESIDENCE" id="RESIDENCE2" value="2">
+                                            <label for="RESIDENCE2">대한민국</label>
+                                        </div>
+                                        <div class="iradio">
+                                            <input type="radio" name="P_RESIDENCE" id="RESIDENCE3" value="3">
+                                            <label for="RESIDENCE3">미국</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- 구분선 -->
+                    <div class="form_line"></div>
+
+                    <!-- 복무 정보 -->
+                    <div class="join_form">
+
+                        <!-- 계급/직급 -->
+                        <div class="item full">
+                            <div class="field">
+                                <div class="th">현재 또는 전역 당시 계급/직급/등급</div>
+                                <div class="td">
+                                    <input type="text"
+                                           name="LAST_RANK"
+                                           id="LAST_RANK"
+                                           class="input"
+                                           maxlength="500">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 복무 형태 -->
+                        <div class="item">
+                            <div class="field">
+                                <div class="th">한국 복무 당시 복무 형태</div>
+                                <div class="td">
+                                    <select name="P_SERVICE_CATEGORY" id="P_SERVICE_CATEGORY" class="select">
+                                        <option value="">옵션선택</option>
+                                        <option value="1">USFK</option>
+                                        <option value="2">KATUSA</option>
+                                        <option value="3">CFC (ROK)</option>
+                                        <option value="4">Retired MND, JCS, and/or services (ROK)</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 소속 군 -->
+                        <div class="item">
+                            <div class="field">
+                                <div class="th">한국 복무 당시 소속 군</div>
+                                <div class="td">
+                                    <select name="P_SERVICE_BRANCH" id="P_SERVICE_BRANCH" class="select">
+                                        <option value="">옵션선택</option>
+                                        <option value="1">KATUSA</option>
+                                        <option value="2">ROK Air Force</option>
+                                        <option value="3">ROK Army</option>
+                                        <option value="4">ROK Marine Corps</option>
+                                        <option value="5">ROK Navy</option>
+                                        <option value="6">ROKA Support Group</option>
+                                        <option value="7">U.S Air Force</option>
+                                        <option value="8">U.S Army</option>
+                                        <option value="9">U.S DoD Personnel</option>
+                                        <option value="10">U.S Marine Corps</option>
+                                        <option value="11">U.S Navy</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 복무 연도 (체크박스) -->
+                        <div class="item full">
+                            <div class="field">
+                                <div class="th">한국에서 복무한 연도</div>
+                                <div class="td">
+                                    <div class="year_wrap">
+                                        <div class="icheck_wrap" id="service-year-grid">
+                                            <!-- JavaScript로 동적 생성 -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 복무 주둔지 (체크박스) -->
+                        <div class="item full">
+                            <div class="field">
+                                <div class="th">한국에서 복무한 주둔지</div>
+                                <div class="td">
+                                    <div class="year_wrap third">
+                                        <div class="icheck_wrap" id="service-station-grid">
+                                            <!-- JavaScript로 동적 생성 -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 부대 및 직책 -->
+                        <div class="item full">
+                            <div class="field">
+                                <div class="th">부대 및 직책</div>
+                                <div class="td">
+                                    <input type="text"
+                                           name="UNIT_POSITON"
+                                           id="UNIT_POSITON"
+                                           class="input"
+                                           maxlength="100">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 이메일 (변경 시 인증 필요) -->
+                        <div class="item">
+                            <div class="field xsshortmar">
+                                <div class="th">이메일 인증</div>
+                                <div class="td">
+                                    <div class="filebtn">
+                                        <div class="filebtn_in">
+                                            <input type="text"
+                                                   class="input"
+                                                   name="EMAIL"
+                                                   id="EMAIL"
+                                                   placeholder="이메일"
+                                                   maxlength="100">
+                                            <a href="javascript:sendMail();" class="fbtn noplus">인증번호 발송</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 인증번호 확인 -->
+                        <div class="item">
+                            <div class="field">
+                                <div class="th">인증번호 확인</div>
+                                <div class="td">
+                                    <input type="text"
+                                           class="input"
+                                           name="CERTI_NUM"
+                                           id="CERTI_NUM"
+                                           placeholder="인증번호를 입력해주세요"
+                                           maxlength="6"
+                                           oninput="this.value = this.value.replace(/[^0-9]/g, '');">
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- 버튼 영역 -->
+                    <div class="btn_area center">
+                        <a href="javascript:goWriteAct();" class="btn-submit">수정하기</a>&nbsp;&nbsp;
+                        <a href="javascript:goDeleteAct();" class="btn-cancel">탈퇴하기</a>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <!-- TODO: 여기에 푸터 include -->
+
+    </form>
+
+</div>
+
+<script type="text/javascript">
+
+    //==================================================
+    // Enum 매핑 (DB 값 <-> HTML value)
+    //==================================================
+    const GENDER_MAP = { 'M': '1', 'F': '2', 'O': '3', 'N': '4' };
+    const GENDER_REVERSE = { '1': 'M', '2': 'F', '3': 'O', '4': 'N' };
+
+    const RESIDENCE_MAP = { 'O': '1', 'K': '2', 'U': '3' };
+    const RESIDENCE_REVERSE = { '1': 'O', '2': 'K', '3': 'U' };
+
+    const SERVICE_CATEGORY_MAP = {
+        'USFK': '1',
+        'KATUSA': '2',
+        'CFC_ROK': '3',
+        'RETIRED_MND_JCS_SERVICES_ROK': '4'
+    };
+    const SERVICE_CATEGORY_REVERSE = {
+        '1': 'USFK',
+        '2': 'KATUSA',
+        '3': 'CFC_ROK',
+        '4': 'RETIRED_MND_JCS_SERVICES_ROK'
+    };
+
+    const SERVICE_BRANCH_MAP = {
+        'KATUSA': '1',
+        'ROK_AIR_FORCE': '2',
+        'ROK_ARMY': '3',
+        'ROK_MARINE_CORPS': '4',
+        'ROK_NAVY': '5',
+        'ROKA_SUPPORT_GROUP': '6',
+        'US_AIR_FORCE': '7',
+        'US_ARMY': '8',
+        'US_DOD_PERSONNEL': '9',
+        'US_MARINE_CORPS': '10',
+        'US_NAVY': '11'
+    };
+    const SERVICE_BRANCH_REVERSE = {
+        '1': 'KATUSA',
+        '2': 'ROK_AIR_FORCE',
+        '3': 'ROK_ARMY',
+        '4': 'ROK_MARINE_CORPS',
+        '5': 'ROK_NAVY',
+        '6': 'ROKA_SUPPORT_GROUP',
+        '7': 'US_AIR_FORCE',
+        '8': 'US_ARMY',
+        '9': 'US_DOD_PERSONNEL',
+        '10': 'US_MARINE_CORPS',
+        '11': 'US_NAVY'
+    };
+
+    // 주둔지 이름 배열 (value는 index + 1)
+    const STATION_NAMES = [
+        'Camp Ames', 'Camp Carroll', 'Camp Castle',
+        'Camp Chinhae', 'Camp Colbern', 'Camp Eagle',
+        'Camp Essayons', 'Camp Garry Owen', 'Camp Giant',
+        'Camp Greaves', 'Camp Henry', 'Camp Hialeah',
+        'Camp Hovey', 'Camp Howze', 'Camp Jackson',
+        'Camp Kitty Hawk', 'Camp Kyle', 'Camp La Guardia',
+        'Camp Libby', 'Camp Liberty Bell', 'Camp Long',
+        'Camp Market', 'Camp Mobile', 'Camp Mujuk',
+        'Camp Nimble', 'Camp Page', 'Camp Pelham',
+        'Camp Sears', 'Camp Stanley', 'Camp Stanton',
+        'Camp Yongin', 'Chinhae Navy Base', 'CP TANGO',
+        'Kunsan Air Base', 'Kangiu(Gwangju) Air Base', 'MEC-Pohang',
+        'Osan Air Base', 'Pusan(Busan) Air Base', 'Suwon Air Base',
+        'Taegu(daegu) Air Base', 'USAG Casey(Camp Casey)', 'USAG Daegu(Camp Walker)',
+        'USAG Humphreys(Camp Humphreys)', 'USAG Red Cloud(Camp Red Cloud)',
+        'USAG Yongsan(Includes: Camp Kim & Coiner)', 'Yechon(Yecheon) Air Base',
+        'Camp Mujuk', 'Sachon Air Base', 'Other'
+    ];
+
+    //==================================================
+    // 복무 연도 체크박스 생성 (1950~2025)
+    //==================================================
+    function createServiceYearCheckboxes() {
+        const grid = document.getElementById('service-year-grid');
+        for (let year = 1950; year <= 2025; year++) {
+            const div = document.createElement('div');
+            div.className = 'icheck';
+
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.name = 'P_SERVICE_YEAR';
+            checkbox.id = 'P_SERVICE_YEAR' + (year - 1949);
+            checkbox.value = year;
+
+            const label = document.createElement('label');
+            label.htmlFor = 'P_SERVICE_YEAR' + (year - 1949);
+            label.textContent = year;
+
+            div.appendChild(checkbox);
+            div.appendChild(label);
+            grid.appendChild(div);
+        }
+    }
+
+    //==================================================
+    // 복무 주둔지 체크박스 생성
+    //==================================================
+    function createServiceStationCheckboxes() {
+        const grid = document.getElementById('service-station-grid');
+        STATION_NAMES.forEach((station, index) => {
+            const div = document.createElement('div');
+            div.className = 'icheck';
+
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.name = 'P_SERVICE_STATION';
+            checkbox.id = 'P_SERVICE_STATION' + (index + 1);
+            checkbox.value = (index + 1);  // value는 숫자 (1~49)
+
+            const label = document.createElement('label');
+            label.htmlFor = 'P_SERVICE_STATION' + (index + 1);
+            label.textContent = station;
+
+            div.appendChild(checkbox);
+            div.appendChild(label);
+            grid.appendChild(div);
+        });
+    }
+
+    //==================================================
+    // 페이지 로드 시 체크박스 생성 및 회원 정보 조회
+    //==================================================
+    window.onload = async function() {
+        // 체크박스 생성
+        createServiceYearCheckboxes();
+        createServiceStationCheckboxes();
+
+        // 회원 정보 로드
+        await loadMemberInfo();
+    };
+
+    //==================================================
+    // 회원 정보 조회
+    //==================================================
+    async function loadMemberInfo() {
+        try {
+            const response = await fetch('/api/personal/my-info', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                const member = data.member;
+
+                // 기본 정보
+                document.getElementById('ID').value = member.loginId || '';
+                document.getElementById('NAME').value = member.name || '';
+                document.getElementById('BIRTH_DATE').value = member.birthDate || '';
+
+                // 성별 (Enum → HTML value 변환)
+                if (member.gender && GENDER_MAP[member.gender]) {
+                    const genderValue = GENDER_MAP[member.gender];
+                    const genderRadio = document.querySelector(`input[name="P_GENDER"][value="${genderValue}"]`);
+                    if (genderRadio) {
+                        genderRadio.checked = true;
+                    }
+                }
+
+                // 거주지 (Enum → HTML value 변환)
+                if (member.residence && RESIDENCE_MAP[member.residence]) {
+                    const residenceValue = RESIDENCE_MAP[member.residence];
+                    const residenceRadio = document.querySelector(`input[name="P_RESIDENCE"][value="${residenceValue}"]`);
+                    if (residenceRadio) {
+                        residenceRadio.checked = true;
+                    }
+                }
+
+                // 복무 정보
+                document.getElementById('LAST_RANK').value = member.lastRank || '';
+
+                // 복무 형태 (Enum → HTML value 변환)
+                if (member.serviceCategory && SERVICE_CATEGORY_MAP[member.serviceCategory]) {
+                    document.getElementById('P_SERVICE_CATEGORY').value = SERVICE_CATEGORY_MAP[member.serviceCategory];
+                }
+
+                // 소속 군 (Enum → HTML value 변환)
+                if (member.serviceBranch && SERVICE_BRANCH_MAP[member.serviceBranch]) {
+                    document.getElementById('P_SERVICE_BRANCH').value = SERVICE_BRANCH_MAP[member.serviceBranch];
+                }
+
+                // 복무 연도 체크박스 선택
+                if (member.serviceYear) {
+                    const years = member.serviceYear.split('|');
+                    years.forEach(year => {
+                        const checkbox = document.querySelector(`input[name="P_SERVICE_YEAR"][value="${year.trim()}"]`);
+                        if (checkbox) {
+                            checkbox.checked = true;
+                        }
+                    });
+                }
+
+                // 복무 주둔지 체크박스 선택
+                if (member.serviceStation) {
+                    console.log('DB 주둔지 데이터:', member.serviceStation);
+                    const stations = member.serviceStation.split('|');
+                    stations.forEach(stationValue => {
+                        const trimmedValue = stationValue.trim();
+                        console.log('주둔지 값:', trimmedValue);
+
+                        // 숫자인지 확인 (DB에 숫자로 저장된 경우)
+                        if (!isNaN(trimmedValue) && trimmedValue !== '') {
+                            // 숫자로 저장된 경우 - 바로 체크
+                            const checkbox = document.querySelector(`input[name="P_SERVICE_STATION"][value="${trimmedValue}"]`);
+                            if (checkbox) {
+                                checkbox.checked = true;
+                                console.log('체크 완료 (숫자):', trimmedValue, STATION_NAMES[parseInt(trimmedValue) - 1]);
+                            } else {
+                                console.warn('체크박스를 찾을 수 없음:', trimmedValue);
+                            }
+                        } else {
+                            // 텍스트로 저장된 경우 - 이름으로 찾기
+                            const stationIndex = STATION_NAMES.findIndex(name =>
+                                name.toLowerCase() === trimmedValue.toLowerCase()
+                            );
+
+                            if (stationIndex !== -1) {
+                                const stationNumValue = stationIndex + 1;
+                                const checkbox = document.querySelector(`input[name="P_SERVICE_STATION"][value="${stationNumValue}"]`);
+                                if (checkbox) {
+                                    checkbox.checked = true;
+                                    console.log('체크 완료 (텍스트):', STATION_NAMES[stationIndex]);
+                                }
+                            } else {
+                                console.warn('주둔지를 찾을 수 없음:', trimmedValue);
+                            }
+                        }
+                    });
+                }
+
+                document.getElementById('UNIT_POSITON').value = member.unitPosition || '';
+                document.getElementById('EMAIL').value = member.email || '';
+
+                document.rpForm.SendCertiNumber.value = "";
+
+            } else {
+                alert('회원 정보를 불러오는데 실패했습니다.');
+            }
+
+        } catch (error) {
+            console.error('Error loading member info:', error);
+            alert('회원 정보를 불러오는 중 오류가 발생했습니다.');
+        }
+    }
+
+    //==================================================
+    // 공백 입력 방지
+    //==================================================
+    function noSpaceForm(obj) {
+        var str_space = /\s/;
+        if (str_space.exec(obj.value)) {
+            obj.focus();
+            obj.value = obj.value.replace(' ', '');
+            return false;
+        }
+    }
+
+    //==================================================
+    // 이메일 인증번호 발송
+    //==================================================
+    async function sendMail() {
+        var form = document.rpForm;
+
+        if ((form.EMAIL.value).length == 0) {
+            alert('이메일을 입력해주세요.');
+            form.EMAIL.focus();
+            return;
+        }
+
+        try {
+            const response = await fetch('/api/personal/send-email-verification', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    email: form.EMAIL.value
+                })
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                alert('인증번호가 발송되었습니다!\n\n[개발 모드]\n콘솔에서 인증번호를 확인하세요.\n\n인증번호: ' + data.code);
+                form.SendCertiNumber.value = data.code;
+                form.CERTI_NUM.focus();
+            } else {
+                alert(data.message || '인증번호 발송에 실패했습니다.');
+            }
+
+        } catch (error) {
+            alert('인증번호 발송 중 오류가 발생했습니다.');
+            console.error(error);
+        }
+    }
+
+    //==================================================
+    // 회원정보 수정
+    //==================================================
+    async function goWriteAct() {
+        var form = document.rpForm;
+        var i;
+        var passwordRegex = /^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#$%^&*?_]).{8,16}$/;
+
+        // 이름 확인
+        if ((form.NAME.value).length == 0) {
+            alert('이름을 입력해주세요.');
+            form.NAME.focus();
+            return;
+        }
+
+        // 비밀번호 변경에 원하는 경우
+        if (document.getElementsByName('PW_AGREE')[0].checked) {
+            const newPassword = form.PW1.value;
+            const confirmPassword = form.PW2.value;
+
+            if (newPassword.length == 0) {
+                alert('비밀번호를 입력해주세요.');
+                form.PW1.focus();
+                return;
+            }
+
+            if (confirmPassword.length == 0) {
+                alert('비밀번호 확인을 입력해주세요.');
+                form.PW2.focus();
+                return;
+            }
+
+            if (passwordRegex.test(newPassword)) {
+                if (newPassword == confirmPassword) {
+                    form.PW.value = newPassword;
+                } else {
+                    alert("비밀번호가 일치하지 않습니다.");
+                    form.PW1.value = "";
+                    form.PW2.value = "";
+                    form.PW1.focus();
+                    return;
+                }
+            } else {
+                alert("비밀번호는 8~16자의 영문, 숫자, 특수기호를 포함해야 합니다.");
+                form.PW1.value = "";
+                form.PW2.value = "";
+                form.PW1.focus();
+                return;
+            }
+        }
+
+        // 생년월일 확인
+        if ((form.BIRTH_DATE.value).length == 0) {
+            alert('생년월일 입력해주세요.');
+            form.BIRTH_DATE.focus();
+            return;
+        }
+
+        // 성별 확인 (HTML value → Enum 변환)
+        for (i = 0; i < document.getElementsByName('P_GENDER').length; i++) {
+            if (document.getElementsByName('P_GENDER')[i].checked) {
+                const htmlValue = document.getElementsByName('P_GENDER')[i].value;
+                form.GENDER.value = GENDER_REVERSE[htmlValue];
+            }
+        }
+        if ((form.GENDER.value).length == 0) {
+            alert('성별을 입력해주세요.');
+            return;
+        }
+
+        // 거주지 확인 (HTML value → Enum 변환)
+        for (i = 0; i < document.getElementsByName('P_RESIDENCE').length; i++) {
+            if (document.getElementsByName('P_RESIDENCE')[i].checked) {
+                const htmlValue = document.getElementsByName('P_RESIDENCE')[i].value;
+                form.RESIDENCE.value = RESIDENCE_REVERSE[htmlValue];
+            }
+        }
+        if ((form.RESIDENCE.value).length == 0) {
+            alert('현재 거주지를 입력해주세요.');
+            return;
+        }
+
+        // 계급/직급
+        if ((form.LAST_RANK.value).length == 0) {
+            alert('현재 또는 전역 당시 계급/직급/등급을 입력해주세요.');
+            form.LAST_RANK.focus();
+            return;
+        }
+
+        // 복무 형태 (HTML value → Enum 변환)
+        var ServiceCategory = document.getElementById('P_SERVICE_CATEGORY');
+        const categoryHtmlValue = ServiceCategory.options[ServiceCategory.selectedIndex].value;
+        form.SERVICE_CATEGORY.value = SERVICE_CATEGORY_REVERSE[categoryHtmlValue];
+        if ((form.SERVICE_CATEGORY.value).length == 0) {
+            alert('한국 복무 당시 복무 형태를 입력해주세요.');
+            return;
+        }
+
+        // 소속 군 (HTML value → Enum 변환)
+        var ServiceBranch = document.getElementById('P_SERVICE_BRANCH');
+        const branchHtmlValue = ServiceBranch.options[ServiceBranch.selectedIndex].value;
+        form.SERVICE_BRANCH.value = SERVICE_BRANCH_REVERSE[branchHtmlValue];
+        if ((form.SERVICE_BRANCH.value).length == 0) {
+            alert('한국 복무 당시 소속 군을 입력해주세요.');
+            return;
+        }
+
+        // 복무 연도
+        var ServiceYear = document.getElementsByName('P_SERVICE_YEAR');
+        for (i = 0; i < document.getElementsByName('P_SERVICE_YEAR').length; i++) {
+            if (ServiceYear[i].checked) {
+                if ((form.SERVICE_YEAR.value).length == 0)
+                    form.SERVICE_YEAR.value += ServiceYear[i].value;
+                else
+                    form.SERVICE_YEAR.value = form.SERVICE_YEAR.value + "|" + ServiceYear[i].value;
+            }
+        }
+        if ((form.SERVICE_YEAR.value).length == 0) {
+            alert('한국에서 복무한 연도를 입력해주세요.');
+            return;
+        }
+
+        // 복무 주둔지 (숫자 value → 텍스트로 변환)
+        var ServiceStation = document.getElementsByName('P_SERVICE_STATION');
+        for (i = 0; i < document.getElementsByName('P_SERVICE_STATION').length; i++) {
+            if (ServiceStation[i].checked) {
+                const stationValue = parseInt(ServiceStation[i].value);
+                const stationName = STATION_NAMES[stationValue - 1];
+                if ((form.SERVICE_STATION.value).length == 0)
+                    form.SERVICE_STATION.value += stationName;
+                else
+                    form.SERVICE_STATION.value = form.SERVICE_STATION.value + "|" + stationName;
+            }
+        }
+        if ((form.SERVICE_STATION.value).length == 0) {
+            alert('한국에서 복무한 주둔지를 입력해주세요.');
+            return;
+        }
+
+        // 부대 및 직책
+        if ((form.UNIT_POSITON.value).length == 0) {
+            alert('부대 및 직책을 입력해주세요.');
+            form.UNIT_POSITON.focus();
+            return;
+        }
+
+        // 이메일
+        if (form.EMAIL.value == "") {
+            alert("이메일을 입력해주세요.");
+            form.EMAIL.focus();
+            return;
+        }
+
+        // 인증번호 확인
+        if (form.CERTI_NUM.value == "") {
+            alert("인증번호를 입력해주세요.");
+            form.CERTI_NUM.focus();
+            return;
+        }
+        if (form.CERTI_NUM.value != form.SendCertiNumber.value) {
+            alert("인증번호가 일치하지 않습니다. 다시 입력해주세요.");
+            form.CERTI_NUM.focus();
+            return;
+        }
+
+        if (!confirm('회원정보를 수정하시겠습니까?')) {
+            return;
+        }
+
+        try {
+            const updateData = {
+                gender: form.GENDER.value,
+                residence: form.RESIDENCE.value,
+                lastRank: form.LAST_RANK.value,
+                serviceCategory: form.SERVICE_CATEGORY.value,
+                serviceBranch: form.SERVICE_BRANCH.value,
+                serviceYear: form.SERVICE_YEAR.value,
+                serviceStation: form.SERVICE_STATION.value,
+                unitPosition: form.UNIT_POSITON.value,
+                email: form.EMAIL.value
+            };
+
+            // 비밀번호 변경 시 추가
+            if (form.PW.value.length > 0) {
+                updateData.newPassword = form.PW.value;
+            }
+
+            const response = await fetch('/api/personal/update-info', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(updateData)
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                alert('회원정보가 성공적으로 수정되었습니다.');
+                window.location.reload();
+            } else {
+                alert(data.message || '회원정보 수정에 실패했습니다.');
+            }
+
+        } catch (error) {
+            alert('회원정보 수정 중 오류가 발생했습니다.');
+            console.error(error);
+        }
+    }
+
+    //==================================================
+    // 회원 탈퇴
+    //==================================================
+    async function goDeleteAct() {
+        if (!confirm('회원을 탈퇴 하시겠습니까?')) {
+            return;
+        }
+
+        const password = prompt('회원 탈퇴를 위해 비밀번호를 입력해주세요:');
+        if (!password) {
+            return;
+        }
+
+        try {
+            const response = await fetch('/api/personal/delete-account', {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    password: password
+                })
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                alert('회원 탈퇴가 완료되었습니다.');
+                window.location.href = '/';
+            } else {
+                alert(data.message || '회원 탈퇴에 실패했습니다.');
+            }
+
+        } catch (error) {
+            alert('회원 탈퇴 중 오류가 발생했습니다.');
+            console.error(error);
+        }
+    }
+
+</script>
+
+</body>
+
+</html>

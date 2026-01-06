@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('회원정보관리 - 주한미군 전역장병 채용 플랫폼')}"></head>
+
+<body class="sub">
+<div class="wrapper">
+
+    <th:block th:replace="~{fragments/header :: header}"></th:block>
+
+    <form id="profileForm" th:action="@{/company/profile}" method="post">
+        <input type="hidden" name="id" th:value="${member.id}"/>
+        
+        <div class="sub_container">
+            <div class="container">
+
+                <div th:replace="~{company/fragments/sidebar :: sidebar('profile')}"></div>
+
+                <div class="sub_tit mb20">회원정보관리</div>
+                <div class="sub_txt mb60">기업 정보를 수정·확인하실 수 있습니다.</div>
+
+                <div th:if="${success}" class="alert" style="background:#d4edda; padding:15px; border-radius:10px; margin-bottom:20px; text-align:center;">
+                    <span style="color:#155724;" th:text="${success}">저장되었습니다.</span>
+                </div>
+
+                <!-- 담당자 정보 -->
+                <div class="sub_stit mb30">담당자 정보</div>
+                <div class="join_box only">
+                    <div class="join_form">
+                        <div class="item">
+                            <div class="field">
+                                <div class="th">아이디</div>
+                                <div class="td"><input type="text" class="input" th:value="${member.loginId}" readonly style="background:#f5f5f5;"></div>
+                            </div>
+                        </div>
+                        <div class="item">
+                            <div class="field">
+                                <div class="th">담당자명 <span class="required">*</span></div>
+                                <div class="td"><input type="text" name="managerName" class="input" th:value="${member.managerName}" required></div>
+                            </div>
+                        </div>
+                        <div class="item">
+                            <div class="field">
+                                <div class="th">이메일 <span class="required">*</span></div>
+                                <div class="td"><input type="email" name="email" class="input" th:value="${member.email}" required></div>
+                            </div>
+                        </div>
+                        <div class="item">
+                            <div class="field">
+                                <div class="th">전화번호 <span class="required">*</span></div>
+                                <div class="td"><input type="tel" name="phone" class="input" th:value="${member.phone}" required></div>
+                            </div>
+                        </div>
+
+                        <!-- 비밀번호 변경 -->
+                        <div class="item full">
+                            <div class="field">
+                                <div class="th">
+                                    비밀번호 변경
+                                    <div class="iradio_wrap" style="display:inline-flex; gap:15px; margin-left:20px;">
+                                        <div class="iradio"><input type="radio" name="changePassword" id="pwYes" value="Y" onchange="togglePasswordFields(true)"><label for="pwYes">예</label></div>
+                                        <div class="iradio"><input type="radio" name="changePassword" id="pwNo" value="N" checked onchange="togglePasswordFields(false)"><label for="pwNo">아니오</label></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="passwordFields" style="display:none;">
+                            <div class="item">
+                                <div class="field">
+                                    <div class="th">새 비밀번호</div>
+                                    <div class="td"><input type="password" name="newPassword" id="newPassword" class="input" placeholder="8~16자의 영문, 숫자, 특수기호" maxlength="16"></div>
+                                </div>
+                            </div>
+                            <div class="item">
+                                <div class="field">
+                                    <div class="th">비밀번호 확인</div>
+                                    <div class="td"><input type="password" name="confirmPassword" id="confirmPassword" class="input" maxlength="16"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 기업 정보 -->
+                <div class="sub_stit mb30" style="margin-top:40px;">기업 정보</div>
+                <div class="join_box only">
+                    <div class="join_form">
+                        <div class="item">
+                            <div class="field">
+                                <div class="th">회사명 <span class="required">*</span></div>
+                                <div class="td"><input type="text" name="company" class="input" th:value="${member.company}" required></div>
+                            </div>
+                        </div>
+                        <div class="item">
+                            <div class="field">
+                                <div class="th">그룹사</div>
+                                <div class="td">
+                                    <select name="parentCompanyCd" class="select">
+                                        <option value="">선택</option>
+                                        <option value="삼성" th:selected="${member.parentCompanyCd == '삼성'}">삼성</option>
+                                        <option value="SK" th:selected="${member.parentCompanyCd == 'SK'}">SK</option>
+                                        <option value="현대" th:selected="${member.parentCompanyCd == '현대'}">현대</option>
+                                        <option value="LG" th:selected="${member.parentCompanyCd == 'LG'}">LG</option>
+                                        <option value="롯데" th:selected="${member.parentCompanyCd == '롯데'}">롯데</option>
+                                        <option value="한화" th:selected="${member.parentCompanyCd == '한화'}">한화</option>
+                                        <option value="기타" th:selected="${member.parentCompanyCd == '기타'}">기타</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="item full">
+                            <div class="field">
+                                <div class="th">회사 주소</div>
+                                <div class="td"><input type="text" name="companyAddress" class="input" th:value="${member.companyAddress}"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="btn_area center">
+                    <button type="submit" class="btn-submit mar">저장하기</button>
+                    <a href="#" class="btn-cancel" onclick="if(confirm('정말 회원을 탈퇴하시겠습니까?')) { location.href='/company/withdraw'; }">회원탈퇴</a>
+                </div>
+
+            </div>
+        </div>
+    </form>
+
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+</div>
+<th:block th:replace="~{fragments/footer :: scripts}"></th:block>
+<script>
+function togglePasswordFields(show) {
+    document.getElementById('passwordFields').style.display = show ? 'block' : 'none';
+}
+</script>
+<style>.required { color:red; }</style>
+</body>
+</html>

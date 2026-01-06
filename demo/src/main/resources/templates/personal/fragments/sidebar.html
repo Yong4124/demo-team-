@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<div th:fragment="sidebar(active)" class="mypage_nav mb40">
+    <ul class="mypage_menu" style="display:flex; gap:10px; flex-wrap:wrap; padding:20px; background:#f8f9fa; border-radius:15px;">
+        <li>
+            <a th:href="@{/personal/dashboard}" 
+               th:classappend="${active == 'dashboard'} ? 'on' : ''"
+               style="display:block; padding:12px 25px; border-radius:25px; text-decoration:none; color:#333; font-weight:500;">
+                대시보드
+            </a>
+        </li>
+        <li>
+            <a th:href="@{/personal/profile}" 
+               th:classappend="${active == 'profile'} ? 'on' : ''"
+               style="display:block; padding:12px 25px; border-radius:25px; text-decoration:none; color:#333; font-weight:500;">
+                회원정보관리
+            </a>
+        </li>
+        <li>
+            <a th:href="@{/personal/resumes}" 
+               th:classappend="${active == 'resumes'} ? 'on' : ''"
+               style="display:block; padding:12px 25px; border-radius:25px; text-decoration:none; color:#333; font-weight:500;">
+                이력서관리
+            </a>
+        </li>
+        <li>
+            <a th:href="@{/personal/applications}" 
+               th:classappend="${active == 'applications'} ? 'on' : ''"
+               style="display:block; padding:12px 25px; border-radius:25px; text-decoration:none; color:#333; font-weight:500;">
+                지원현황
+            </a>
+        </li>
+        <li>
+            <a th:href="@{/personal/favorites}" 
+               th:classappend="${active == 'favorites'} ? 'on' : ''"
+               style="display:block; padding:12px 25px; border-radius:25px; text-decoration:none; color:#333; font-weight:500;">
+                관심기업
+            </a>
+        </li>
+    </ul>
+    <style>
+        .mypage_menu a.on { background:#255EB8; color:#fff !important; }
+        .mypage_menu a:hover { background:#e9ecef; }
+        .mypage_menu a.on:hover { background:#1e4a8f; }
+    </style>
+</div>
+
+</html>

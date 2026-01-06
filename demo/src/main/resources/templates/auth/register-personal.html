@@ -1,173 +1,361 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/layout :: head('USFK Jobs - 개인회원 가입')}"></head>
-<body>
-<nav th:replace="~{fragments/layout :: header}"></nav>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('개인회원 가입 - 주한미군 전역장병 채용 플랫폼')}"></head>
 
-<main class="py-5">
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-8">
-                <div class="card shadow">
-                    <div class="card-header bg-primary text-white">
-                        <h4 class="mb-0">
-                            <i class="bi bi-person-badge me-2"></i>개인회원 가입
-                        </h4>
+<body class="sub">
+<div class="wrapper">
+
+    <!-- Header -->
+    <th:block th:replace="~{fragments/header :: header}"></th:block>
+
+    <form id="registerForm" th:action="@{/auth/register/personal}" method="post">
+        <div class="sub_container">
+            <div class="container">
+                <div class="job_view">
+                    <div class="sub_tit mb20">회원가입</div>
+
+                    <div class="sub_tab">
+                        <a href="#" class="on">개인회원</a>
+                        <a th:href="@{/auth/register/company}">기업회원</a>
                     </div>
-                    <div class="card-body p-4">
-                        <form th:action="@{/auth/register/personal}" method="post" th:object="${registerDto}">
-                            
-                            <!-- 계정 정보 -->
-                            <h5 class="mb-3 text-primary"><i class="bi bi-key me-2"></i>계정 정보</h5>
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <label for="loginId" class="form-label">아이디 <span class="text-danger">*</span></label>
-                                    <div class="input-group">
-                                        <input type="text" class="form-control" id="loginId" th:field="*{loginId}" 
-                                               th:classappend="${#fields.hasErrors('loginId')} ? 'is-invalid'" required>
-                                        <button type="button" class="btn btn-outline-secondary" onclick="checkDuplicateId('personal')">중복확인</button>
+
+                    <!-- 에러 메시지 -->
+                    <div th:if="${error}" class="alert" style="background:#ffe0e0; padding:15px; border-radius:10px; margin:20px 0; text-align:center;">
+                        <span style="color:#c00;" th:text="${error}">에러 메시지</span>
+                    </div>
+
+                    <div class="join_box">
+                        <div class="join_form">
+
+                            <!-- 아이디 -->
+                            <div class="item">
+                                <div class="field">
+                                    <div class="th">아이디 <span class="required">*</span></div>
+                                    <div class="td">
+                                        <div class="filebtn">
+                                            <div class="filebtn_in">
+                                                <input type="text" class="input" name="loginId" id="loginId" 
+                                                       placeholder="6자 이상의 영문, 숫자" maxlength="50" required>
+                                                <a href="#" class="fbtn noplus" onclick="checkDuplicate(); return false;">중복확인</a>
+                                            </div>
+                                        </div>
+                                        <input type="hidden" id="idChecked" value="N">
                                     </div>
-                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('loginId')}" th:errors="*{loginId}"></div>
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="email" class="form-label">이메일 <span class="text-danger">*</span></label>
-                                    <input type="email" class="form-control" id="email" th:field="*{email}" 
-                                           th:classappend="${#fields.hasErrors('email')} ? 'is-invalid'" required>
-                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
-                                </div>
-                            </div>
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <label for="password" class="form-label">비밀번호 <span class="text-danger">*</span></label>
-                                    <input type="password" class="form-control" id="password" th:field="*{password}" 
-                                           th:classappend="${#fields.hasErrors('password')} ? 'is-invalid'" required>
-                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="passwordConfirm" class="form-label">비밀번호 확인 <span class="text-danger">*</span></label>
-                                    <input type="password" class="form-control" id="passwordConfirm" th:field="*{passwordConfirm}" 
-                                           th:classappend="${#fields.hasErrors('passwordConfirm')} ? 'is-invalid'" required>
-                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('passwordConfirm')}" th:errors="*{passwordConfirm}"></div>
                                 </div>
                             </div>
 
-                            <hr class="my-4">
-
-                            <!-- 개인 정보 -->
-                            <h5 class="mb-3 text-primary"><i class="bi bi-person me-2"></i>개인 정보</h5>
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <label for="firstName" class="form-label">이름 (First Name) <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" id="firstName" th:field="*{firstName}" 
-                                           th:classappend="${#fields.hasErrors('firstName')} ? 'is-invalid'" required>
-                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}"></div>
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="lastName" class="form-label">성 (Last Name) <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" id="lastName" th:field="*{lastName}" 
-                                           th:classappend="${#fields.hasErrors('lastName')} ? 'is-invalid'" required>
-                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}"></div>
-                                </div>
-                            </div>
-                            <div class="row mb-3">
-                                <div class="col-md-4">
-                                    <label for="birthDate" class="form-label">생년월일</label>
-                                    <input type="date" class="form-control" id="birthDate" th:field="*{birthDate}">
-                                </div>
-                                <div class="col-md-4">
-                                    <label for="gender" class="form-label">성별</label>
-                                    <select class="form-select" id="gender" th:field="*{gender}">
-                                        <option value="">선택</option>
-                                        <option value="1">남성</option>
-                                        <option value="2">여성</option>
-                                        <option value="3">기타</option>
-                                        <option value="4">무응답</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-4">
-                                    <label for="residence" class="form-label">거주지</label>
-                                    <select class="form-select" id="residence" th:field="*{residence}">
-                                        <option value="">선택</option>
-                                        <option value="2">대한민국</option>
-                                        <option value="3">미국</option>
-                                        <option value="1">기타</option>
-                                    </select>
+                            <!-- 이름 (통합) -->
+                            <div class="item">
+                                <div class="field">
+                                    <div class="th">이름 <span class="required">*</span></div>
+                                    <div class="td">
+                                        <input type="text" name="name" id="name" class="input" placeholder="이름" maxlength="100" required>
+                                    </div>
                                 </div>
                             </div>
 
-                            <hr class="my-4">
-
-                            <!-- 군 정보 -->
-                            <h5 class="mb-3 text-primary"><i class="bi bi-shield me-2"></i>군 정보</h5>
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <label for="serviceCategory" class="form-label">복무형태</label>
-                                    <select class="form-select" id="serviceCategory" th:field="*{serviceCategory}">
-                                        <option value="">선택</option>
-                                        <option value="1">USFK</option>
-                                        <option value="2">KATUSA</option>
-                                        <option value="3">CFC(ROK)</option>
-                                        <option value="4">Retired MND,JCS,and/or services(ROK)</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="serviceBranch" class="form-label">소속 군</label>
-                                    <select class="form-select" id="serviceBranch" th:field="*{serviceBranch}">
-                                        <option value="">선택</option>
-                                        <option value="1">KATUSA</option>
-                                        <option value="2">ROK Air Force</option>
-                                        <option value="3">ROK Army</option>
-                                        <option value="4">ROK Marine Corps</option>
-                                        <option value="5">ROK Navy</option>
-                                        <option value="6">ROKA Support Group</option>
-                                        <option value="7">U.S Air Force</option>
-                                        <option value="8">U.S Army</option>
-                                        <option value="9">U.S DoD Personnel</option>
-                                        <option value="10">U.S Marine Corps</option>
-                                        <option value="11">U.S Navy</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <label for="lastRank" class="form-label">계급</label>
-                                    <input type="text" class="form-control" id="lastRank" th:field="*{lastRank}">
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="serviceYear" class="form-label">복무년도</label>
-                                    <input type="text" class="form-control" id="serviceYear" th:field="*{serviceYear}" placeholder="예: 2020-2022">
-                                </div>
-                            </div>
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <label for="serviceStation" class="form-label">주둔지</label>
-                                    <input type="text" class="form-control" id="serviceStation" th:field="*{serviceStation}">
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="unitPosition" class="form-label">부대 및 직책</label>
-                                    <input type="text" class="form-control" id="unitPosition" th:field="*{unitPosition}">
+                            <!-- 비밀번호 -->
+                            <div class="item">
+                                <div class="field">
+                                    <div class="th">비밀번호 <span class="required">*</span></div>
+                                    <div class="td">
+                                        <input type="password" name="password" id="password" class="input" 
+                                               placeholder="8~16자의 영문, 숫자, 특수기호" maxlength="16" required>
+                                    </div>
                                 </div>
                             </div>
 
-                            <hr class="my-4">
-
-                            <div class="d-grid gap-2">
-                                <button type="submit" class="btn btn-primary btn-lg">
-                                    <i class="bi bi-person-plus me-2"></i>회원가입
-                                </button>
-                                <a th:href="@{/auth/register}" class="btn btn-outline-secondary">
-                                    <i class="bi bi-arrow-left me-2"></i>돌아가기
-                                </a>
+                            <!-- 비밀번호 확인 -->
+                            <div class="item">
+                                <div class="field">
+                                    <div class="th">비밀번호 확인 <span class="required">*</span></div>
+                                    <div class="td">
+                                        <input type="password" name="passwordConfirm" id="passwordConfirm" class="input" maxlength="16" required>
+                                    </div>
+                                </div>
                             </div>
-                        </form>
+
+                            <!-- 이메일 -->
+                            <div class="item">
+                                <div class="field">
+                                    <div class="th">이메일 <span class="required">*</span></div>
+                                    <div class="td">
+                                        <input type="email" name="email" id="email" class="input" placeholder="example@email.com" required>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 생년월일 -->
+                            <div class="item">
+                                <div class="field">
+                                    <div class="th">생년월일</div>
+                                    <div class="td">
+                                        <div class="calendar_wrap">
+                                            <input type="date" name="birthDate" id="birthDate" class="input">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 성별 -->
+                            <div class="item">
+                                <div class="field">
+                                    <div class="th">성별</div>
+                                    <div class="td">
+                                        <div class="iradio_wrap">
+                                            <div class="iradio">
+                                                <input type="radio" name="gender" id="gender1" value="남자">
+                                                <label for="gender1">남자</label>
+                                            </div>
+                                            <div class="iradio">
+                                                <input type="radio" name="gender" id="gender2" value="여자">
+                                                <label for="gender2">여자</label>
+                                            </div>
+                                            <div class="iradio">
+                                                <input type="radio" name="gender" id="gender3" value="기타">
+                                                <label for="gender3">기타</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 현재 거주지 -->
+                            <div class="item full">
+                                <div class="field">
+                                    <div class="th">현재 거주지</div>
+                                    <div class="td">
+                                        <div class="iradio_wrap">
+                                            <div class="iradio">
+                                                <input type="radio" name="residence" id="residence1" value="대한민국">
+                                                <label for="residence1">대한민국</label>
+                                            </div>
+                                            <div class="iradio">
+                                                <input type="radio" name="residence" id="residence2" value="미국">
+                                                <label for="residence2">미국</label>
+                                            </div>
+                                            <div class="iradio">
+                                                <input type="radio" name="residence" id="residence3" value="기타">
+                                                <label for="residence3">기타</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 현재 또는 전역 당시 계급 -->
+                            <div class="item full">
+                                <div class="field">
+                                    <div class="th">현재 또는 전역 당시 계급/직급/등급</div>
+                                    <div class="td">
+                                        <input type="text" name="lastRank" class="input" maxlength="100">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 복무 형태 -->
+                            <div class="item">
+                                <div class="field">
+                                    <div class="th">한국 복무 당시 복무 형태</div>
+                                    <div class="td">
+                                        <select name="serviceCategory" class="select">
+                                            <option value="">옵션선택</option>
+                                            <option value="USFK">USFK</option>
+                                            <option value="KATUSA">KATUSA</option>
+                                            <option value="CFC (ROK)">CFC (ROK)</option>
+                                            <option value="Retired MND, JCS">Retired MND, JCS, and/or services (ROK)</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 소속 군 -->
+                            <div class="item">
+                                <div class="field">
+                                    <div class="th">한국 복무 당시 소속 군</div>
+                                    <div class="td">
+                                        <select name="serviceBranch" class="select">
+                                            <option value="">옵션선택</option>
+                                            <option value="KATUSA">KATUSA</option>
+                                            <option value="ROK Air Force">ROK Air Force</option>
+                                            <option value="ROK Army">ROK Army</option>
+                                            <option value="ROK Marine Corps">ROK Marine Corps</option>
+                                            <option value="ROK Navy">ROK Navy</option>
+                                            <option value="US Air Force">US Air Force</option>
+                                            <option value="US Army">US Army</option>
+                                            <option value="US Marine Corps">US Marine Corps</option>
+                                            <option value="US Navy">US Navy</option>
+                                            <option value="기타">기타</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 복무 연도 -->
+                            <div class="item">
+                                <div class="field">
+                                    <div class="th">한국에서 복무한 연도</div>
+                                    <div class="td">
+                                        <select name="serviceYear" class="select">
+                                            <option value="">옵션선택</option>
+                                            <option value="현재 복무중">현재 복무중</option>
+                                            <option value="6개월 미만">6개월 미만</option>
+                                            <option value="6개월~1년">6개월~1년</option>
+                                            <option value="1년~2년">1년~2년</option>
+                                            <option value="2년~3년">2년~3년</option>
+                                            <option value="3년 이상">3년 이상</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 부대 위치 -->
+                            <div class="item">
+                                <div class="field">
+                                    <div class="th">한국에서 복무한 부대 위치</div>
+                                    <div class="td">
+                                        <select name="serviceStation" class="select">
+                                            <option value="">옵션선택</option>
+                                            <option value="Camp Casey">Camp Casey</option>
+                                            <option value="Camp Humphreys">Camp Humphreys</option>
+                                            <option value="Camp Red Cloud">Camp Red Cloud</option>
+                                            <option value="Camp Walker">Camp Walker</option>
+                                            <option value="Kunsan Air Base">Kunsan Air Base</option>
+                                            <option value="Osan Air Base">Osan Air Base</option>
+                                            <option value="Yongsan Garrison">Yongsan Garrison</option>
+                                            <option value="기타">기타</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 부대 및 직책 -->
+                            <div class="item full">
+                                <div class="field">
+                                    <div class="th">한국 복무 당시 부대 및 직책</div>
+                                    <div class="td">
+                                        <input type="text" name="serviceUnit" class="input" maxlength="200">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 개인정보 동의 -->
+                            <div class="agree_wrap">
+                                <div class="agree_box">
+                                    <div class="agree_tit">
+                                        <input type="checkbox" id="agreeAll" onchange="toggleAll(this)">
+                                        <label for="agreeAll">전체 동의</label>
+                                    </div>
+                                </div>
+                                <div class="agree_box">
+                                    <div class="agree_item">
+                                        <input type="checkbox" name="agreeTerms" id="agreeTerms" required>
+                                        <label for="agreeTerms">[필수] 이용약관 동의</label>
+                                    </div>
+                                    <div class="agree_item">
+                                        <input type="checkbox" name="agreePrivacy" id="agreePrivacy" required>
+                                        <label for="agreePrivacy">[필수] 개인정보 수집 및 이용 동의</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
                     </div>
+
+                    <!-- 버튼 -->
+                    <div class="btn_area center">
+                        <button type="submit" class="btn-submit mar">가입하기</button>
+                        <a th:href="@{/}" class="btn-cancel">취소</a>
+                    </div>
+
                 </div>
             </div>
         </div>
-    </div>
-</main>
+    </form>
 
-<footer th:replace="~{fragments/layout :: footer}"></footer>
-<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+    <!-- Footer -->
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+
+</div>
+
+<!-- Scripts -->
+<th:block th:replace="~{fragments/footer :: scripts}"></th:block>
+<script>
+// 아이디 중복 확인
+function checkDuplicate() {
+    const loginId = document.getElementById('loginId').value;
+    
+    if (loginId.length < 6) {
+        alert('아이디는 6자 이상이어야 합니다.');
+        return;
+    }
+    
+    const idRegex = /^[A-Za-z0-9]{6,}$/;
+    if (!idRegex.test(loginId)) {
+        alert('아이디는 6자 이상의 영문, 숫자만 사용 가능합니다.');
+        return;
+    }
+    
+    fetch('/auth/check-id?loginId=' + encodeURIComponent(loginId) + '&type=personal')
+        .then(response => response.json())
+        .then(data => {
+            if (data.available) {
+                alert('사용 가능한 아이디입니다.');
+                document.getElementById('idChecked').value = 'Y';
+            } else {
+                alert('이미 사용중인 아이디입니다.');
+                document.getElementById('idChecked').value = 'N';
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('중복 확인 중 오류가 발생했습니다.');
+        });
+}
+
+// 전체 동의
+function toggleAll(checkbox) {
+    document.getElementById('agreeTerms').checked = checkbox.checked;
+    document.getElementById('agreePrivacy').checked = checkbox.checked;
+}
+
+// 폼 제출 전 검증
+document.getElementById('registerForm').addEventListener('submit', function(e) {
+    const password = document.getElementById('password').value;
+    const passwordConfirm = document.getElementById('passwordConfirm').value;
+    const idChecked = document.getElementById('idChecked').value;
+    
+    // 아이디 중복확인
+    if (idChecked !== 'Y') {
+        alert('아이디 중복확인을 해주세요.');
+        e.preventDefault();
+        return;
+    }
+    
+    // 비밀번호 확인
+    if (password !== passwordConfirm) {
+        alert('비밀번호가 일치하지 않습니다.');
+        e.preventDefault();
+        return;
+    }
+    
+    // 비밀번호 형식 확인
+    const pwRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,16}$/;
+    if (!pwRegex.test(password)) {
+        alert('비밀번호는 8~16자의 영문, 숫자, 특수기호를 포함해야 합니다.');
+        e.preventDefault();
+        return;
+    }
+});
+</script>
+
+<style>
+.required { color: #ff0000; }
+.agree_wrap { margin-top: 30px; border-top: 1px solid #eee; padding-top: 30px; }
+.agree_box { margin-bottom: 15px; }
+.agree_tit { font-size: 18px; font-weight: 600; }
+.agree_item { margin: 10px 0; padding-left: 20px; }
+</style>
+
 </body>
 </html>

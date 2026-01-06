@@ -1,112 +1,185 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/layout :: head('USFK Jobs - 채용공고')}"></head>
-<body>
-<nav th:replace="~{fragments/layout :: header}"></nav>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/head :: head('채용공고 - 주한미군 전역장병 채용 플랫폼')}"></head>
 
-<main class="py-5">
-    <div class="container">
-        <h2 class="fw-bold mb-4">
-            <i class="bi bi-briefcase me-2 text-primary"></i>채용공고
-        </h2>
+<script>
+    function adjustListMargin() {
+        var searchArea = document.querySelector('.sub_search_area');
+        var jobList = document.querySelector('.job_list');
+        if (!searchArea || !jobList) return;
         
-        <!-- 검색 -->
-        <div class="card shadow-sm mb-4">
-            <div class="card-body">
-                <form th:action="@{/job/list}" method="get">
-                    <div class="row g-3 align-items-center">
-                        <div class="col-md-10">
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="bi bi-search"></i></span>
-                                <input type="text" class="form-control" name="keyword" 
-                                       th:value="${keyword}" placeholder="채용공고 제목 또는 회사명으로 검색">
+        if (window.innerWidth <= 1200) {
+            var h = searchArea.offsetHeight + 100;
+            jobList.style.marginTop = h + "px";
+        } else {
+            jobList.style.marginTop = "0px";
+        }
+    }
+    window.addEventListener('load', adjustListMargin);
+    window.addEventListener('resize', adjustListMargin);
+</script>
+
+<body class="sub">
+<div class="wrapper">
+
+    <!-- Header -->
+    <th:block th:replace="~{fragments/header :: header}"></th:block>
+
+    <form name="JobForm" method="get" th:action="@{/job/list}">
+        <input type="hidden" name="page" th:value="${currentPage}"/>
+
+        <div class="sub_container">
+            <div class="container">
+                <div class="sub_tit_wrap between">
+                    <div class="sub_tit">채용공고</div>
+
+                    <div class="sub_search_area">
+                        <!-- 그룹사 선택 -->
+                        <div class="sort_box">
+                            <select class="select" name="groupCompany" id="groupCompany" onchange="this.form.submit();">
+                                <option value="">그룹사 선택</option>
+                                <option value="삼성" th:selected="${groupCompany == '삼성'}">삼성</option>
+                                <option value="SK" th:selected="${groupCompany == 'SK'}">SK</option>
+                                <option value="현대" th:selected="${groupCompany == '현대'}">현대</option>
+                                <option value="LG" th:selected="${groupCompany == 'LG'}">LG</option>
+                                <option value="롯데" th:selected="${groupCompany == '롯데'}">롯데</option>
+                                <option value="한화" th:selected="${groupCompany == '한화'}">한화</option>
+                                <option value="LS" th:selected="${groupCompany == 'LS'}">LS</option>
+                                <option value="DL" th:selected="${groupCompany == 'DL'}">DL</option>
+                                <option value="두산" th:selected="${groupCompany == '두산'}">두산</option>
+                                <option value="기타" th:selected="${groupCompany == '기타'}">기타</option>
+                            </select>
+                        </div>
+
+                        <!-- 검색 필드 -->
+                        <div class="sort_box">
+                            <select class="select" name="searchField" id="searchField">
+                                <option value="ALL" th:selected="${searchField == 'ALL' or searchField == null}">전체</option>
+                                <option value="TITLE" th:selected="${searchField == 'TITLE'}">공고명</option>
+                                <option value="COMPANY" th:selected="${searchField == 'COMPANY'}">회사명</option>
+                                <option value="LOCATION" th:selected="${searchField == 'LOCATION'}">근무처</option>
+                            </select>
+                        </div>
+
+                        <!-- 검색어 -->
+                        <div class="input_box">
+                            <input type="text" class="input" name="keyword" id="keyword" 
+                                   th:value="${keyword}" placeholder="검색어">
+                            <a href="#" class="submit" onclick="this.closest('form').submit(); return false;"></a>
+                        </div>
+
+                        <!-- 정렬 -->
+                        <div class="sort_box">
+                            <select class="select" name="sortOption" id="sortOption" onchange="this.form.submit();">
+                                <option value="START_DATE" th:selected="${sortOption == 'START_DATE' or sortOption == null}">시작일순</option>
+                                <option value="END_DATE" th:selected="${sortOption == 'END_DATE'}">마감일순</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 채용공고 목록 -->
+                <ul class="job_list">
+                    <th:block th:each="job : ${jobPostings}">
+                        <li>
+                            <div class="box">
+                                <div class="img">
+                                    <img th:src="@{/img/common/default_logo.png}" alt="기업 로고">
+                                </div>
+                                <div class="job_linfo">
+                                    <div class="ji_tit">
+                                        <a th:href="@{/job/detail/{id}(id=${job.id})}" style="cursor:pointer; color:inherit;" th:text="${job.title}">공고 제목</a>
+                                    </div>
+                                    <div class="ji_linfo">
+                                        <div class="item">
+                                            <div class="th">직업유형</div>
+                                            <div class="td" th:text="${job.jobType ?: '-'}">직업유형</div>
+                                        </div>
+                                        <div class="item">
+                                            <div class="th">고용형태</div>
+                                            <div class="td" th:text="${job.jobForm ?: '-'}">고용형태</div>
+                                        </div>
+                                        <div class="item">
+                                            <div class="th">직종</div>
+                                            <div class="td" th:text="${job.jobCategory ?: '-'}">직종</div>
+                                        </div>
+                                        <div class="item">
+                                            <div class="th">업계</div>
+                                            <div class="td" th:text="${job.industry ?: '-'}">업계</div>
+                                        </div>
+                                        <div class="item">
+                                            <div class="th">직급</div>
+                                            <div class="td" th:text="${job.roleLevel ?: '-'}">직급</div>
+                                        </div>
+                                        <div class="item">
+                                            <div class="th">경력</div>
+                                            <div class="td" th:text="${job.experience ?: '-'}">경력</div>
+                                        </div>
+                                        <div class="item">
+                                            <div class="th">기본급</div>
+                                            <div class="td" th:text="${job.baseSalary ?: '-'}">기본급</div>
+                                        </div>
+                                        <div class="item">
+                                            <div class="th">근무시간</div>
+                                            <div class="td" th:text="${job.workTime ?: '-'}">근무시간</div>
+                                        </div>
+                                        <div class="item full">
+                                            <div class="th">근무처</div>
+                                            <div class="td" th:text="${job.jobLocation ?: '-'}">근무처</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="job_rinfo">
+                                    <div class="company_nm" th:text="${job.companyMember?.company ?: '회사명'}">회사명</div>
+                                    <div class="date_info">
+                                        <span th:text="${#temporals.format(job.startDate, 'yyyy-MM-dd')}">시작일</span> ~ 
+                                        <span th:text="${#temporals.format(job.endDate, 'yyyy-MM-dd')}">마감일</span>
+                                    </div>
+                                    <a th:href="@{/job/detail/{id}(id=${job.id})}" class="btn-view">상세보기</a>
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-md-2">
-                            <button type="submit" class="btn btn-primary w-100">검색</button>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </div>
-        
-        <!-- 검색 결과 정보 -->
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <p class="text-muted mb-0">
-                총 <strong th:text="${#lists.size(jobPostings)}">0</strong>건의 채용공고
-                <span th:if="${keyword}">
-                    - "<span th:text="${keyword}">검색어</span>" 검색 결과
-                </span>
-            </p>
-            <a th:href="@{/job/list}" class="btn btn-outline-secondary btn-sm" th:if="${keyword}">
-                <i class="bi bi-x-circle me-1"></i>검색 초기화
-            </a>
-        </div>
-        
-        <!-- 채용공고 목록 -->
-        <div class="row g-4">
-            <div class="col-md-6 col-lg-4" th:each="job : ${jobPostings}">
-                <div class="card h-100 shadow-sm">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-start mb-2">
-                            <span class="badge bg-primary" th:if="${job.jobType}" th:text="${job.jobType}">정규직</span>
-                            <small class="text-muted">
-                                D-<span th:text="${T(java.time.temporal.ChronoUnit).DAYS.between(T(java.time.LocalDate).now(), job.endDate)}">7</span>
-                            </small>
-                        </div>
-                        <h5 class="card-title mb-2">
-                            <a th:href="@{/job/detail/{id}(id=${job.id})}" class="text-decoration-none text-dark" th:text="${job.title}">
-                                채용공고 제목
-                            </a>
-                        </h5>
-                        <h6 class="card-subtitle mb-3 text-primary" th:text="${job.companyMember.company}">회사명</h6>
-                        
-                        <ul class="list-unstyled small text-muted mb-3">
-                            <li th:if="${job.jobLocation}">
-                                <i class="bi bi-geo-alt me-1"></i>
-                                <span th:text="${job.jobLocation}">근무지</span>
-                            </li>
-                            <li th:if="${job.experience}">
-                                <i class="bi bi-person-workspace me-1"></i>
-                                <span th:text="${job.experience}">경력</span>
-                            </li>
-                            <li th:if="${job.baseSalary}">
-                                <i class="bi bi-currency-dollar me-1"></i>
-                                <span th:text="${job.baseSalary}">급여</span>
-                            </li>
-                        </ul>
-                        
-                        <div class="d-flex justify-content-between align-items-center">
-                            <small class="text-muted">
-                                <i class="bi bi-calendar me-1"></i>
-                                마감: <span th:text="${#temporals.format(job.endDate, 'yyyy-MM-dd')}">2024-12-31</span>
-                            </small>
-                        </div>
-                    </div>
-                    <div class="card-footer bg-transparent">
-                        <a th:href="@{/job/detail/{id}(id=${job.id})}" class="btn btn-outline-primary btn-sm w-100">
-                            상세보기 <i class="bi bi-arrow-right"></i>
-                        </a>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- 채용공고가 없을 때 -->
-            <div class="col-12" th:if="${#lists.isEmpty(jobPostings)}">
-                <div class="alert alert-info text-center py-5">
-                    <i class="bi bi-info-circle display-4 d-block mb-3"></i>
-                    <h5 th:if="${keyword}">
-                        "<span th:text="${keyword}">검색어</span>"에 대한 검색 결과가 없습니다.
-                    </h5>
-                    <h5 th:unless="${keyword}">등록된 채용공고가 없습니다.</h5>
-                    <p class="text-muted mb-0">다른 검색어로 시도해보세요.</p>
-                </div>
-            </div>
-        </div>
-    </div>
-</main>
+                        </li>
+                    </th:block>
 
-<footer th:replace="~{fragments/layout :: footer}"></footer>
-<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+                    <!-- 데이터 없음 -->
+                    <li th:if="${#lists.isEmpty(jobPostings)}">
+                        <div class="box" style="text-align: center; padding: 60px;">
+                            <p style="font-size: 18px; color: #666;">등록된 채용공고가 없습니다.</p>
+                        </div>
+                    </li>
+                </ul>
+
+                <!-- 페이징 -->
+                <div class="page_wrap" th:if="${totalPages > 0}">
+                    <div class="page_nation">
+                        <a th:href="@{/job/list(page=0, keyword=${keyword}, searchField=${searchField}, groupCompany=${groupCompany}, sortOption=${sortOption})}" 
+                           class="pprev" th:if="${currentPage > 0}">처음</a>
+                        <a th:href="@{/job/list(page=${currentPage - 1}, keyword=${keyword}, searchField=${searchField}, groupCompany=${groupCompany}, sortOption=${sortOption})}" 
+                           class="prev" th:if="${currentPage > 0}">이전</a>
+                        
+                        <th:block th:each="i : ${#numbers.sequence(startPage, endPage)}">
+                            <a th:href="@{/job/list(page=${i}, keyword=${keyword}, searchField=${searchField}, groupCompany=${groupCompany}, sortOption=${sortOption})}"
+                               th:text="${i + 1}" th:classappend="${i == currentPage} ? 'on' : ''">1</a>
+                        </th:block>
+                        
+                        <a th:href="@{/job/list(page=${currentPage + 1}, keyword=${keyword}, searchField=${searchField}, groupCompany=${groupCompany}, sortOption=${sortOption})}" 
+                           class="next" th:if="${currentPage < totalPages - 1}">다음</a>
+                        <a th:href="@{/job/list(page=${totalPages - 1}, keyword=${keyword}, searchField=${searchField}, groupCompany=${groupCompany}, sortOption=${sortOption})}" 
+                           class="nnext" th:if="${currentPage < totalPages - 1}">마지막</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <!-- Footer -->
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+
+</div>
+
+<!-- Scripts -->
+<th:block th:replace="~{fragments/footer :: scripts}"></th:block>
+
 </body>
 </html>

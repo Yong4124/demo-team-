@@ -1,0 +1,462 @@
+<!doctype html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>주한미군 전역장병 채용 플랫폼</title>
+
+    <!-- Swiper -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+
+    <!-- Main CSS -->
+    <link rel="stylesheet" href="./css/main.css?v=1" />
+
+    <style>
+        /* ====== 지도 섹션 추가 CSS ====== */
+        .jido_content {
+            display: flex;
+            gap: 20px;
+        }
+        .jido_map_area {
+            position: relative;
+            flex: 1;
+            min-height: 620px;
+        }
+        .jido_map {
+            width: 700px;
+            height: 440px;
+            background-image: url('/img/main/main_njido.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            position: absolute;
+            top: 80px;
+            left: 0;
+        }
+        .jido_group {
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            z-index: 2;
+        }
+        .jido_group a {
+            display: block;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .jido_group a:hover {
+            transform: scale(1.1);
+        }
+        .jido_group img {
+            height: 18px;
+            width: auto;
+            max-width: 120px;
+        }
+        .jido_group::after {
+            content: "";
+            position: absolute;
+            background: #bbb;
+            width: 1px;
+        }
+
+        /* 상단 로고들 */
+        .jido_top1 { left: 255px; top: 0; }
+        .jido_top1::after { height: 75px; left: 50%; top: 100%; }
+
+        .jido_top2 { left: 335px; top: 0; }
+        .jido_top2::after { height: 90px; left: 50%; top: 100%; }
+
+        .jido_top3 { left: 405px; top: 0; }
+        .jido_top3::after { height: 115px; left: 50%; top: 100%; }
+
+        .jido_top4 { left: 490px; top: 0; }
+        .jido_top4::after { height: 140px; left: 50%; top: 100%; }
+
+        .jido_top5 { left: 565px; top: 0; }
+        .jido_top5::after { height: 125px; left: 50%; top: 100%; }
+
+        /* 하단 로고들 */
+        .jido_bottom1 { left: 10px; top: 545px; }
+        .jido_bottom1::after { height: 235px; left: 50%; bottom: 100%; top: auto; }
+
+        .jido_bottom2 { left: 115px; top: 480px; }
+        .jido_bottom2::after { height: 145px; left: 50%; bottom: 100%; top: auto; }
+
+        .jido_bottom3 { left: 255px; top: 545px; }
+        .jido_bottom3::after { height: 160px; left: 50%; bottom: 100%; top: auto; }
+
+        .jido_bottom4 { left: 385px; top: 510px; }
+        .jido_bottom4::after { height: 105px; left: 50%; bottom: 100%; top: auto; }
+
+        /* 오른쪽 목록 */
+        .jido_right_list {
+            width: 180px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            padding-top: 5px;
+        }
+        .jido_right_row {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            padding: 4px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .jido_right_row:last-child { border-bottom: none; }
+        .jido_right_row a {
+            display: block;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .jido_right_row a:hover { transform: scale(1.05); }
+        .jido_right_row img {
+            height: 15px;
+            width: auto;
+            max-width: 130px;
+        }
+
+        /* 팝업 내용 */
+        .company_pop_content .logo { margin-bottom: 15px; }
+        .company_pop_content .logo img { height: 35px; width: auto; }
+        .company_pop_content .cnp_tit {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #255EB8;
+        }
+        .company_pop_content .info_table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .company_pop_content .info_table th {
+            text-align: left;
+            padding: 10px;
+            background: #f5f5f5;
+            width: 100px;
+            font-weight: 600;
+        }
+        .company_pop_content .info_table td {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        .company_pop_content .info_table td a {
+            color: #255EB8;
+            text-decoration: underline;
+        }
+        .company_pop_content .btn_website {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 30px;
+            background: #255EB8;
+            color: #fff !important;
+            border-radius: 5px;
+            text-decoration: none !important;
+            font-weight: 600;
+        }
+        .company_pop_content .btn_website:hover { background: #1e4d96; }
+    </style>
+</head>
+
+<body>
+<div class="wrapper">
+
+    <!-- Header -->
+    <header class="site-header">
+        <div class="container topbar">
+            <div class="brand-logos">
+                <a href="/"><img src="/img/common/t_bndea.svg" alt="대한상공회의소"></a>
+                <a href="/"><img src="/img/common/t_bnhan.svg" alt="한미동맹재단"></a>
+            </div>
+
+            <div class="top-links" id="topLinks">
+                <a href="/login">로그인</a>
+                <a href="/register">회원가입</a>
+                <a href="/en">ENGLISH</a>
+            </div>
+        </div>
+
+        <div class="container mainbar">
+            <div class="site-title">
+                <h1>주한미군 전역장병 채용 플랫폼</h1>
+                <p>USFK Job Platform</p>
+            </div>
+
+            <nav class="main-nav" aria-label="메인 메뉴">
+                <a href="/intro">소개</a>
+                <a href="/jobs">채용공고</a>
+                <a href="/notices">공지사항</a>
+                <a href="/reviews">취업수기</a>
+                <a href="/resources">자료실</a>
+                <a href="/faq">FAQ</a>
+                <a href="/mypage" id="mypageLink">마이페이지</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main_container">
+        <div class="container">
+
+            <!-- KV -->
+            <section class="main_kv" aria-label="메인 배너">
+                <div class="swiper mySwiper">
+                    <div class="swiper-wrapper">
+                        <div class="swiper-slide">
+                            <img src="/img/main/main_kv1.png" class="kv_pc" alt="">
+                            <img src="/img/main/main_kv1_m.png" class="kv_mobile" alt="">
+                        </div>
+                        <div class="swiper-slide">
+                            <img src="/img/main/main_kv4.png" class="kv_pc" alt="">
+                            <img src="/img/main/main_kv4_m.png" class="kv_mobile" alt="">
+                        </div>
+                        <div class="swiper-slide">
+                            <img src="/img/main/main_kv5.png" class="kv_pc" alt="">
+                            <img src="/img/main/main_kv5_m.png" class="kv_mobile" alt="">
+                        </div>
+                    </div>
+
+                    <div class="custom-progress" aria-hidden="true">
+                        <div class="current_wrap">
+                            <span class="current">01</span><span class="numbar"></span><span class="total">03</span>
+                        </div>
+                        <div class="bar"><div class="fill"></div></div>
+                    </div>
+                </div>
+
+                <div class="kv_btn_wrap">
+                    <div class="kv_btn">
+                        <button type="button" onclick="window.location.href='/jobs'">채용공고</button>
+                    </div>
+                </div>
+            </section>
+
+            <div class="kv_btn_mobile">
+                <a href="/jobs">채용공고</a>
+            </div>
+
+            <!-- Search -->
+            <section class="search_area" aria-label="채용공고 검색">
+                <div class="item">
+                    <div class="search-box">
+                        <input type="text" class="input" id="searchword" placeholder="채용공고 검색" autocomplete="off" />
+                        <button class="search-btn" type="button" onclick="goSearch()">
+                            <span>검색</span>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- USA Map / Companies (원본과 동일) -->
+            <section class="partner-company main_line" aria-label="미국진출 한국기업">
+                <h2 class="m_tit">미국진출 한국기업</h2>
+
+                <div class="jido_wrap">
+                    <p class="txt">로고를 클릭하시면 기업정보를 확인할 수 있습니다.</p>
+
+                    <div class="jido_content">
+                        <!-- 지도 영역 -->
+                        <div class="jido_map_area">
+                            <div class="jido_map"></div>
+
+                            <!-- 상단 로고들 (ND, MN, MI, IN, OH) -->
+                            <div class="jido_group jido_top1">
+                                <a href="#" onclick="jidoView(event,'doosan_nd')"><img src="/img/main/jido_logo/logo_doosan.png" alt="DOOSAN Bobcat"></a>
+                            </div>
+                            <div class="jido_group jido_top2">
+                                <a href="#" onclick="jidoView(event,'doosan_mn')"><img src="/img/main/jido_logo/logo_doosan.png" alt="DOOSAN Bobcat"></a>
+                            </div>
+                            <div class="jido_group jido_top3">
+                                <a href="#" onclick="jidoView(event,'sksiltron')"><img src="/img/main/jido_logo/logo_sksiltron.png" alt="SK Siltron"></a>
+                                <a href="#" onclick="jidoView(event,'lgenergy_mi')"><img src="/img/main/jido_logo/logo_lgenergys.png" alt="LG Energy Solution"></a>
+                            </div>
+                            <div class="jido_group jido_top4">
+                                <a href="#" onclick="jidoView(event,'samsungsdi')"><img src="/img/main/jido_logo/logo_sdi.png" alt="SAMSUNG SDI"></a>
+                                <a href="#" onclick="jidoView(event,'skhynix_in')"><img src="/img/main/jido_logo/logo_skhynix.png" alt="SK hynix"></a>
+                            </div>
+                            <div class="jido_group jido_top5">
+                                <a href="#" onclick="jidoView(event,'lgchem_oh')"><img src="/img/main/jido_logo/logo_lgchem.png" alt="LG Chem"></a>
+                                <a href="#" onclick="jidoView(event,'lgenergy_oh')"><img src="/img/main/jido_logo/logo_lgenergys.png" alt="LG Energy Solution"></a>
+                            </div>
+
+                            <!-- 하단 로고들 (CA, AZ, TX, LA) -->
+                            <div class="jido_group jido_bottom1">
+                                <a href="#" onclick="jidoView(event,'hyundai_ca')"><img src="/img/main/jido_logo/logo_hyundai.png" alt="HYUNDAI"></a>
+                                <a href="#" onclick="jidoView(event,'samsung_ca')"><img src="/img/main/jido_logo/logo_samsung.png" alt="SAMSUNG"></a>
+                                <a href="#" onclick="jidoView(event,'skhynix_ca')"><img src="/img/main/jido_logo/logo_skhynix.png" alt="SK hynix"></a>
+                                <a href="#" onclick="jidoView(event,'solidigm')"><img src="/img/main/jido_logo/logo_solidigm.png" alt="Solidigm"></a>
+                            </div>
+                            <div class="jido_group jido_bottom2">
+                                <a href="#" onclick="jidoView(event,'lgenergy_az')"><img src="/img/main/jido_logo/logo_lgenergys.png" alt="LG Energy Solution"></a>
+                            </div>
+                            <div class="jido_group jido_bottom3">
+                                <a href="#" onclick="jidoView(event,'samsung_tx')"><img src="/img/main/jido_logo/logo_samsung.png" alt="SAMSUNG"></a>
+                                <a href="#" onclick="jidoView(event,'dl')"><img src="/img/main/jido_logo/logo_dl.png" alt="DL Chemical"></a>
+                                <a href="#" onclick="jidoView(event,'soulbrain')"><img src="/img/main/jido_logo/logo_soulbrain.png" alt="Soulbrain"></a>
+                            </div>
+                            <div class="jido_group jido_bottom4">
+                                <a href="#" onclick="jidoView(event,'lottechemical')"><img src="/img/main/jido_logo/logo_lottechemical.png" alt="LOTTE CHEMICAL"></a>
+                                <a href="#" onclick="jidoView(event,'hyundai_la')"><img src="/img/main/jido_logo/logo_hyundai.png" alt="HYUNDAI"></a>
+                            </div>
+                        </div>
+
+                        <!-- 오른쪽 기업 목록 -->
+                        <div class="jido_right_list">
+                            <div class="jido_right_row">
+                                <a href="#" onclick="jidoView(event,'lotte_me')"><img src="/img/main/jido_logo/logo_lotte2.png" alt="LOTTE"></a>
+                            </div>
+                            <div class="jido_right_row">
+                                <a href="#" onclick="jidoView(event,'lgchem_ma')"><img src="/img/main/jido_logo/logo_lgchem.png" alt="LG Chem"></a>
+                                <a href="#" onclick="jidoView(event,'hyundai_ma')"><img src="/img/main/jido_logo/logo_hyundai.png" alt="HYUNDAI"></a>
+                            </div>
+                            <div class="jido_right_row">
+                                <a href="#" onclick="jidoView(event,'skpharmteco')"><img src="/img/main/jido_logo/logo_pmc.png" alt="SK pharmteco"></a>
+                                <a href="#" onclick="jidoView(event,'skbiopharma')"><img src="/img/main/jido_logo/logo_biopmc.png" alt="SK biopharmaceuticals"></a>
+                                <a href="#" onclick="jidoView(event,'hanwhaocean')"><img src="/img/main/jido_logo/logo_hanwhaocean.png" alt="Hanwha Ocean"></a>
+                            </div>
+                            <div class="jido_right_row">
+                                <a href="#" onclick="jidoView(event,'lgnova')"><img src="/img/main/jido_logo/logo_lgnova.png" alt="LG NOVA"></a>
+                            </div>
+                            <div class="jido_right_row">
+                                <a href="#" onclick="jidoView(event,'lgenergy_va')"><img src="/img/main/jido_logo/logo_lgenergys.png" alt="LG Energy Solution"></a>
+                                <a href="#" onclick="jidoView(event,'samsung_va')"><img src="/img/main/jido_logo/logo_samsung.png" alt="SAMSUNG"></a>
+                            </div>
+                            <div class="jido_right_row">
+                                <a href="#" onclick="jidoView(event,'lsgreenlink')"><img src="/img/main/jido_logo/logo_lsgreenlink.png" alt="LS GreenLink"></a>
+                            </div>
+                            <div class="jido_right_row">
+                                <a href="#" onclick="jidoView(event,'hankook')"><img src="/img/main/jido_logo/logo_nakook.png" alt="HANKOOK"></a>
+                            </div>
+                            <div class="jido_right_row">
+                                <a href="#" onclick="jidoView(event,'doosan_sc')"><img src="/img/main/jido_logo/logo_doosan.png" alt="DOOSAN Bobcat"></a>
+                                <a href="#" onclick="jidoView(event,'lgenergy_sc')"><img src="/img/main/jido_logo/logo_lgenergys.png" alt="LG Energy Solution"></a>
+                                <a href="#" onclick="jidoView(event,'lgchem_sc')"><img src="/img/main/jido_logo/logo_lgchem.png" alt="LG Chem"></a>
+                                <a href="#" onclick="jidoView(event,'lgelect')"><img src="/img/main/jido_logo/logo_lgelect.png" alt="LG Electronics"></a>
+                            </div>
+                            <div class="jido_right_row">
+                                <a href="#" onclick="jidoView(event,'hyosung')"><img src="/img/main/jido_logo/logo_hyosung.png" alt="HYOSUNG HICO"></a>
+                                <a href="#" onclick="jidoView(event,'skon_ga')"><img src="/img/main/jido_logo/logo_skon.png" alt="SK On"></a>
+                            </div>
+                            <div class="jido_right_row">
+                                <a href="#" onclick="jidoView(event,'kumho')"><img src="/img/main/jido_logo/logo_kumho.png" alt="KUMHO TIRE"></a>
+                                <a href="#" onclick="jidoView(event,'hyundai_ga')"><img src="/img/main/jido_logo/logo_hyundai.png" alt="HYUNDAI"></a>
+                                <a href="#" onclick="jidoView(event,'kia')"><img src="/img/main/jido_logo/logo_nia.png" alt="KIA"></a>
+                            </div>
+                            <div class="jido_right_row">
+                                <a href="#" onclick="jidoView(event,'skbattery')"><img src="/img/main/jido_logo/logo_skbattery.png" alt="SK battery America"></a>
+                                <a href="#" onclick="jidoView(event,'skc')"><img src="/img/main/jido_logo/logi_skc.png" alt="SKC"></a>
+                            </div>
+                            <div class="jido_right_row">
+                                <a href="#" onclick="jidoView(event,'lgenergy_ga')"><img src="/img/main/jido_logo/logo_lgenergys.png" alt="LG Energy Solution"></a>
+                                <a href="#" onclick="jidoView(event,'qcells')"><img src="/img/main/jido_logo/logo_qcells.png" alt="Hanwha Q CELLS"></a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Popup -->
+                    <div class="cpb_box_group" id="jidoPopup" style="display:none;">
+                        <div class="company_pop_wrap_box">
+                            <a href="#" class="cpb_close_btn" onclick="jidoClose(event)">
+                                <img src="/img/main/jido_close.svg" alt="닫기" />
+                            </a>
+                            <div class="company_new_pop">
+                                <div class="company_agent" id="companyAgent"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Jobs -->
+            <section class="job-list" aria-label="채용공고">
+                <h2 class="m_tit">
+                    채용공고
+                    <a class="more" href="/jobs">더보기</a>
+                </h2>
+                <div class="row" id="jobCards"></div>
+            </section>
+
+            <!-- Notices -->
+            <section class="notice-list" aria-label="공지사항">
+                <h2 class="m_tit">
+                    공지사항
+                    <a class="more" href="/notices">더보기</a>
+                </h2>
+                <div class="row" id="noticeCards"></div>
+            </section>
+
+            <!-- Contact -->
+            <section class="tel_wrap" aria-label="문의처">
+                <div class="tel_box">
+                    <div class="item bar">
+                        <div class="tel_th">기업회원 문의처</div>
+                        <div class="tel_num">02-6050-3566</div>
+                        <div class="tel_email">contact@korcham.net</div>
+                        <div class="tel_nm">대한상공회의소</div>
+                    </div>
+                    <div class="item">
+                        <div class="tel_th">개인회원 문의처</div>
+                        <div class="tel_num">070-7755-0075</div>
+                        <div class="tel_email">kusaf2020@gmail.com</div>
+                        <div class="tel_nm">한미동맹재단</div>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script src="./js/main.js?v=2"></script>
+<script>
+    // 페이지 로드 시 세션 체크
+    document.addEventListener('DOMContentLoaded', function() {
+        checkLoginStatus();
+    });
+
+    async function checkLoginStatus() {
+        try {
+            const companyRes = await fetch('/api/company/check-session');
+            const companyData = await companyRes.json();
+            if (companyData.loggedIn) {
+                document.getElementById('topLinks').innerHTML = `
+                    <a href="javascript:logoutCompany();">로그아웃</a>
+                    <a href="/en">ENGLISH</a>
+                `;
+                document.getElementById('mypageLink').href = '/company/mypage';
+                return;
+            }
+        } catch (e) {
+            console.log('기업 세션 체크 실패');
+        }
+
+        try {
+            const personalRes = await fetch('/api/personal/check-session');
+            const personalData = await personalRes.json();
+            if (personalData.loggedIn) {
+                document.getElementById('topLinks').innerHTML = `
+                    <a href="javascript:logoutPersonal();">로그아웃</a>
+                    <a href="/en">ENGLISH</a>
+                `;
+                document.getElementById('mypageLink').href = '/mypage';
+                return;
+            }
+        } catch (e) {
+            console.log('개인 세션 체크 실패');
+        }
+    }
+
+    async function logoutCompany() {
+        try { await fetch('/api/company/logout', { method: 'POST' }); } catch (e) {}
+        window.location.reload();
+    }
+
+    async function logoutPersonal() {
+        try { await fetch('/api/personal/logout', { method: 'POST' }); } catch (e) {}
+        window.location.reload();
+    }
+</script>
+</body>
+</html>

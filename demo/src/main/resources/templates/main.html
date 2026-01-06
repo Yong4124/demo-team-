@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/head :: head('주한미군 전역장병 채용 플랫폼')}"></head>
+
+<body class="main">
+<div class="wrapper">
+
+    <!-- Header -->
+    <th:block th:replace="~{fragments/header :: header}"></th:block>
+
+    <form name="JobForm" method="get" th:action="@{/job/list}">
+        <input type="hidden" name="searchgwfield" id="searchgwfield" value="" />
+
+        <div class="main_container">
+            <div class="container">
+                <!-- 메인 슬라이더 -->
+                <div class="main_kv">
+                    <div class="kt_text"></div>
+                    <div class="swiper mySwiper">
+                        <div class="swiper-wrapper">
+                            <div class="swiper-slide">
+                                <img th:src="@{/img/main/main_kv1.png}" class="kv_pc" alt="">
+                                <img th:src="@{/img/main/main_kv1_m.png}" class="kv_mobile" alt="">
+                            </div>
+                            <div class="swiper-slide">
+                                <img th:src="@{/img/main/main_kv4.png}" class="kv_pc" alt="">
+                                <img th:src="@{/img/main/main_kv4_m.png}" class="kv_mobile" alt="">
+                            </div>
+                            <div class="swiper-slide">
+                                <img th:src="@{/img/main/main_kv5.png}" class="kv_pc" alt="">
+                                <img th:src="@{/img/main/main_kv5_m.png}" class="kv_mobile" alt="">
+                            </div>
+                        </div>
+                        <div class="custom-progress">
+                            <div class="current_wrap">
+                                <span class="current">01</span><span class="numbar"></span><span class="total">03</span>
+                            </div>
+                            <div class="bar">
+                                <div class="fill"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="kv_btn_wrap">
+                        <div class="kv_btn">
+                            <a th:href="@{/job/list}" style="text-decoration: none;"><button type="button">채용공고</button></a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 모바일 버튼 -->
+                <div class="kv_btn_mobile">
+                    <a th:href="@{/job/list}">채용공고</a>
+                </div>
+
+                <!-- 검색 영역 -->
+                <div class="search_area">
+                    <div class="item">
+                        <div class="search-box">
+                            <input type="text" class="input" name="keyword" id="searchword" value="" 
+                                   onkeypress="if(event.keyCode==13){this.form.submit();}" placeholder="채용공고 검색">
+                            <button type="submit" class="search-btn"><span>검색</span></button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 미국진출 한국기업 지도 -->
+                <div class="partner-company">
+                    <div class="m_tit">미국진출 한국기업</div>
+                    <div class="jido_wrap">
+                        <div class="txt">로고를 클릭하시면 기업정보를 확인할 수 있습니다.</div>
+                        <div class="jido_box">
+                            <div class="jido_link jido_link1">
+                                <a href="#" onclick="jidoView(event,'1_1')" class="jido_slink jido_link1_1"><img th:src="@{/img/main/jido_logo/logo_hyundai.png}" alt=""></a>
+                                <a href="#" onclick="jidoView(event,'1_2')" class="jido_slink jido_link1_2"><img th:src="@{/img/main/jido_logo/logo_samsung.png}" alt=""></a>
+                                <a href="#" onclick="jidoView(event,'1_3')" class="jido_slink jido_link1_3"><img th:src="@{/img/main/jido_logo/logo_skhynix.png}" alt=""></a>
+                                <a href="#" onclick="jidoView(event,'1_4')" class="jido_slink jido_link1_4"><img th:src="@{/img/main/jido_logo/logo_solidigm.png}" alt=""></a>
+                            </div>
+                            <div class="jido_link jido_link2">
+                                <a href="#" onclick="jidoView(event,'2_1')" class="jido_slink jido_link2_1"><img th:src="@{/img/main/jido_logo/logo_lgenergys.png}" alt=""></a>
+                            </div>
+                            <div class="jido_link jido_link3">
+                                <a href="#" onclick="jidoView(event,'3_1')" class="jido_slink jido_link3_1"><img th:src="@{/img/main/jido_logo/logo_samsung.png}" alt=""></a>
+                                <a href="#" onclick="jidoView(event,'3_2')" class="jido_slink jido_link3_2"><img th:src="@{/img/main/jido_logo/logo_dl.png}" alt=""></a>
+                                <a href="#" onclick="jidoView(event,'3_3')" class="jido_slink jido_link3_3"><img th:src="@{/img/main/jido_logo/logo_soulbrain.png}" alt=""></a>
+                            </div>
+                            <div class="jido_link jido_link5">
+                                <a href="#" onclick="jidoView(event,'5_1')" class="jido_slink jido_link5_1"><img th:src="@{/img/main/jido_logo/logo_lottechemical.png}" alt=""></a>
+                            </div>
+                            <div class="jido_link jido_link6">
+                                <a href="#" onclick="jidoView(event,'6_1')" class="jido_slink jido_link6_1"><img th:src="@{/img/main/jido_logo/logo_doosan.png}" alt=""></a>
+                            </div>
+                            <div class="jido_link jido_link7">
+                                <a href="#" onclick="jidoView(event,'7_1')" class="jido_slink jido_link7_1"><img th:src="@{/img/main/jido_logo/logo_doosan.png}" alt=""></a>
+                            </div>
+                            <div class="jido_link jido_link8">
+                                <a href="#" onclick="jidoView(event,'8_1')" class="jido_slink jido_link8_1"><img th:src="@{/img/main/jido_logo/logo_sksiltron.png}" alt=""></a>
+                                <a href="#" onclick="jidoView(event,'8_2')" class="jido_slink jido_link8_2"><img th:src="@{/img/main/jido_logo/logo_lgenergys.png}" alt=""></a>
+                            </div>
+                            <div class="jido_link jido_link9">
+                                <a href="#" onclick="jidoView(event,'9_1')" class="jido_slink jido_link9_1"><img th:src="@{/img/main/jido_logo/logo_sdi.png}" alt=""></a>
+                                <a href="#" onclick="jidoView(event,'9_2')" class="jido_slink jido_link9_2"><img th:src="@{/img/main/jido_logo/logo_skhynix.png}" alt=""></a>
+                            </div>
+                            <div class="jido_link jido_link10">
+                                <a href="#" onclick="jidoView(event,'10_2')" class="jido_slink jido_link10_2"><img th:src="@{/img/main/jido_logo/logo_lgchem.png}" alt=""></a>
+                                <a href="#" onclick="jidoView(event,'10_3')" class="jido_slink jido_link10_3"><img th:src="@{/img/main/jido_logo/logo_lgenergys.png}" alt=""></a>
+                            </div>
+                            <div class="jido_link jido_link11">
+                                <a href="#" onclick="jidoView(event,'11_1')" class="jido_slink jido_link11_1"><img th:src="@{/img/main/jido_logo/logo_lotte2.png}" alt=""></a>
+                            </div>
+                            <div class="jido_link jido_link12">
+                                <a href="#" onclick="jidoView(event,'12_1')" class="jido_slink jido_link12_1"><img th:src="@{/img/main/jido_logo/logo_lgchem.png}" alt=""></a>
+                                <a href="#" onclick="jidoView(event,'12_2')" class="jido_slink jido_link12_2"><img th:src="@{/img/main/jido_logo/logo_hyundai.png}" alt=""></a>
+                            </div>
+                            <div class="jido_link jido_link13">
+                                <a href="#" onclick="jidoView(event,'13_1')" class="jido_slink jido_link13_1"><img th:src="@{/img/main/jido_logo/logo_pmc.png}" alt=""></a>
+                                <a href="#" onclick="jidoView(event,'13_2')" class="jido_slink jido_link13_2"><img th:src="@{/img/main/jido_logo/logo_biopmc.png}" alt=""></a>
+                                <a href="#" onclick="jidoView(event,'13_3')" class="jido_slink jido_link13_3"><img th:src="@{/img/main/jido_logo/logo_hanwhaocean.png}" alt=""></a>
+                            </div>
+                            <div class="jido_link jido_link14">
+                                <a href="#" onclick="jidoView(event,'14_1')" class="jido_slink jido_link14_1"><img th:src="@{/img/main/jido_logo/logo_lgnova.png}" alt=""></a>
+                            </div>
+                            <div class="jido_link jido_link15">
+                                <a href="#" onclick="jidoView(event,'15_1')" class="jido_slink jido_link15_1"><img th:src="@{/img/main/jido_logo/logo_lgenergys.png}" alt=""></a>
+                                <a href="#" onclick="jidoView(event,'15_2')" class="jido_slink jido_link15_2"><img th:src="@{/img/main/jido_logo/logo_samsung.png}" alt=""></a>
+                            </div>
+                            <div class="jido_link jido_link16">
+                                <a href="#" onclick="jidoView(event,'16_1')" class="jido_slink jido_link16_1"><img th:src="@{/img/main/jido_logo/logo_lsgreenlink.png}" alt=""></a>
+                            </div>
+                            <div class="jido_link jido_link17">
+                                <a href="#" onclick="jidoView(event,'17_1')" class="jido_slink jido_link17_1"><img th:src="@{/img/main/jido_logo/logo_doosan.png}" alt=""></a>
+                            </div>
+                            <div class="jido_link jido_link18">
+                                <a href="#" onclick="jidoView(event,'18_1')" class="jido_slink jido_link18_1"><img th:src="@{/img/main/jido_logo/logo_skon.png}" alt=""></a>
+                            </div>
+                            <div class="jido_link jido_link19">
+                                <a href="#" onclick="jidoView(event,'19_1')" class="jido_slink jido_link19_1"><img th:src="@{/img/main/jido_logo/logo_samsung.png}" alt=""></a>
+                            </div>
+                            <div class="jido_link jido_link20">
+                                <a href="#" onclick="jidoView(event,'20_1')" class="jido_slink jido_link20_1"><img th:src="@{/img/main/jido_logo/logo_nakook.png}" alt=""></a>
+                                <a href="#" onclick="jidoView(event,'20_2')" class="jido_slink jido_link20_2"><img th:src="@{/img/main/jido_logo/logo_lgenergys.png}" alt=""></a>
+                                <a href="#" onclick="jidoView(event,'20_3')" class="jido_slink jido_link20_3"><img th:src="@{/img/main/jido_logo/logo_lgchem.png}" alt=""></a>
+                                <a href="#" onclick="jidoView(event,'20_4')" class="jido_slink jido_link20_4"><img th:src="@{/img/main/jido_logo/logo_lgelect.png}" alt=""></a>
+                                <a href="#" onclick="jidoView(event,'20_5')" class="jido_slink jido_link20_5"><img th:src="@{/img/main/jido_logo/logo_hyosung.png}" alt=""></a>
+                                <a href="#" onclick="jidoView(event,'20_6')" class="jido_slink jido_link20_6"><img th:src="@{/img/main/jido_logo/logo_skon.png}" alt=""></a>
+                            </div>
+                            <div class="jido_link jido_link21">
+                                <a href="#" onclick="jidoView(event,'21_1')" class="jido_slink jido_link21_1"><img th:src="@{/img/main/jido_logo/logo_kumho.png}" alt=""></a>
+                                <a href="#" onclick="jidoView(event,'21_2')" class="jido_slink jido_link21_2"><img th:src="@{/img/main/jido_logo/logo_hyundai.png}" alt=""></a>
+                                <a href="#" onclick="jidoView(event,'21_3')" class="jido_slink jido_link21_3"><img th:src="@{/img/main/jido_logo/logo_nia.png}" alt=""></a>
+                                <a href="#" onclick="jidoView(event,'21_4')" class="jido_slink jido_link21_4"><img th:src="@{/img/main/jido_logo/logo_skbattery.png}" alt=""></a>
+                                <a href="#" onclick="jidoView(event,'21_5')" class="jido_slink jido_link21_5"><img th:src="@{/img/main/jido_logo/logi_skc.png}" alt=""></a>
+                                <a href="#" onclick="jidoView(event,'21_6')" class="jido_slink jido_link21_6"><img th:src="@{/img/main/jido_logo/logo_lgenergys.png}" alt=""></a>
+                                <a href="#" onclick="jidoView(event,'21_7')" class="jido_slink jido_link21_7"><img th:src="@{/img/main/jido_logo/logo_qcells.png}" alt=""></a>
+                            </div>
+                            <div class="jido_link jido_link22">
+                                <a href="#" onclick="jidoView(event,'22_1')" class="jido_slink jido_link22_1"><img th:src="@{/img/main/jido_logo/logo_hyundai.png}" alt=""></a>
+                            </div>
+                        </div>
+                        <a href="#" class="jido_close" onclick="jidoClose(event)"><img th:src="@{/img/main/jido_close.svg}" alt="닫기"></a>
+                    </div>
+                </div>
+
+                <!-- 채용공고 목록 - 원본과 동일 -->
+                <div class="job-list mb60">
+                    <div class="m_tit">채용공고<a th:href="@{/job/list}" class="more">더보기</a></div>
+                    
+                    <div class="row">
+                        <!-- 1. Samsung Austin Semiconductor -->
+                        <div class="col-3">
+                            <a th:href="@{/job/list}" class="job_link">
+                                <div class="job_nohover">
+                                    <div class="box">
+                                        <div class="top_img"><img th:src="@{/img/main/mex_img1.png}" alt=""></div>
+                                        <div class="box_in">
+                                            <div class="logo"><img th:src="@{/img/main/bn1.png}" alt=""></div>
+                                            <div class="nm">Samsung Austin Semiconductor</div>
+                                            <div class="txt">Electrical Senior Project Manager II</div>
+                                        </div>
+                                    </div>
+                                    <div class="arrow_wrap"><span class="arrow"></span></div>
+                                </div>
+                                <div class="job_hover_box">
+                                    <div class="job_info">
+                                        <div class="back_img"><img th:src="@{/img/main/hire_com/Company1.png}" alt=""></div>
+                                        <div class="jhb_info_box">
+                                            <div class="jhb_logo"><img th:src="@{/img/main/bn1.png}" alt=""></div>
+                                            <div class="jhb_ibox">
+                                                <div class="jhb_itit">Samsung Austin Semiconductor</div>
+                                                <div class="jhb_itxt">Electrical Senior Project Manager II</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="iarrow_wrap"><span class="iarrow"></span></div>
+                                </div>
+                            </a>
+                        </div>
+                        <!-- 2. SK On -->
+                        <div class="col-3">
+                            <a th:href="@{/job/list}" class="job_link">
+                                <div class="job_nohover">
+                                    <div class="box">
+                                        <div class="top_img"><img th:src="@{/img/main/mex_img2.png}" alt=""></div>
+                                        <div class="box_in">
+                                            <div class="logo"><img th:src="@{/img/main/bn2.png}" alt=""></div>
+                                            <div class="nm">SK On</div>
+                                            <div class="txt">Production Team Member</div>
+                                        </div>
+                                    </div>
+                                    <div class="arrow_wrap"><span class="arrow"></span></div>
+                                </div>
+                                <div class="job_hover_box">
+                                    <div class="job_info">
+                                        <div class="back_img"><img th:src="@{/img/main/hire_com/Company2.png}" alt=""></div>
+                                        <div class="jhb_info_box">
+                                            <div class="jhb_logo"><img th:src="@{/img/main/bn2.png}" alt=""></div>
+                                            <div class="jhb_ibox">
+                                                <div class="jhb_itit">SK On</div>
+                                                <div class="jhb_itxt">Production Team Member</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="iarrow_wrap"><span class="iarrow"></span></div>
+                                </div>
+                            </a>
+                        </div>
+                        <!-- 3. Hyundai -->
+                        <div class="col-3">
+                            <a th:href="@{/job/list}" class="job_link">
+                                <div class="job_nohover">
+                                    <div class="box">
+                                        <div class="top_img"><img th:src="@{/img/main/mex_img3.png}" alt=""></div>
+                                        <div class="box_in">
+                                            <div class="logo"><img th:src="@{/img/main/bn3.png}" alt=""></div>
+                                            <div class="nm">Hyundai Motor Group Metaplant America</div>
+                                            <div class="txt">Equipment Maintenance Team Member</div>
+                                        </div>
+                                    </div>
+                                    <div class="arrow_wrap"><span class="arrow"></span></div>
+                                </div>
+                                <div class="job_hover_box">
+                                    <div class="job_info">
+                                        <div class="back_img"><img th:src="@{/img/main/hire_com/Company3.png}" alt=""></div>
+                                        <div class="jhb_info_box">
+                                            <div class="jhb_logo"><img th:src="@{/img/main/bn3.png}" alt=""></div>
+                                            <div class="jhb_ibox">
+                                                <div class="jhb_itit">Hyundai Motor Group Metaplant America</div>
+                                                <div class="jhb_itxt">Equipment Maintenance Team Member</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="iarrow_wrap"><span class="iarrow"></span></div>
+                                </div>
+                            </a>
+                        </div>
+                        <!-- 4. HL-GA Battery -->
+                        <div class="col-3">
+                            <a th:href="@{/job/list}" class="job_link">
+                                <div class="job_nohover">
+                                    <div class="box">
+                                        <div class="top_img"><img th:src="@{/img/main/mex_img4.png}" alt=""></div>
+                                        <div class="box_in">
+                                            <div class="logo"><img th:src="@{/img/main/bn4.png}" alt=""></div>
+                                            <div class="nm">HL-GA Battery Company</div>
+                                            <div class="txt">Manager, International Procurement</div>
+                                        </div>
+                                    </div>
+                                    <div class="arrow_wrap"><span class="arrow"></span></div>
+                                </div>
+                                <div class="job_hover_box">
+                                    <div class="job_info">
+                                        <div class="back_img"><img th:src="@{/img/main/hire_com/Company4.png}" alt=""></div>
+                                        <div class="jhb_info_box">
+                                            <div class="jhb_logo"><img th:src="@{/img/main/bn4.png}" alt=""></div>
+                                            <div class="jhb_ibox">
+                                                <div class="jhb_itit">HL-GA Battery Company</div>
+                                                <div class="jhb_itxt">Manager, International Procurement</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="iarrow_wrap"><span class="iarrow"></span></div>
+                                </div>
+                            </a>
+                        </div>
+                        <!-- 5. LOTTE -->
+                        <div class="col-3">
+                            <a href="#" class="job_link">
+                                <div class="job_nohover">
+                                    <div class="box">
+                                        <div class="top_img"><img th:src="@{/img/main/mex_img5.png}" alt=""></div>
+                                        <div class="box_in">
+                                            <div class="logo"><img th:src="@{/img/main/bn5.png}" alt=""></div>
+                                            <div class="nm">Positions opening soon</div>
+                                            <div class="txt">Recruitment is in preparation</div>
+                                        </div>
+                                    </div>
+                                    <div class="arrow_wrap"><span class="arrow"></span></div>
+                                </div>
+                                <div class="job_hover_box">
+                                    <div class="job_info">
+                                        <div class="back_img"><img th:src="@{/img/main/hire_com/Company5.png}" alt=""></div>
+                                        <div class="jhb_info_box">
+                                            <div class="jhb_logo"><img th:src="@{/img/main/bn5.png}" alt=""></div>
+                                            <div class="jhb_ibox">
+                                                <div class="jhb_itit">Positions opening soon</div>
+                                                <div class="jhb_itxt">Recruitment is in preparation</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="iarrow_wrap"><span class="iarrow"></span></div>
+                                </div>
+                            </a>
+                        </div>
+                        <!-- 6. Hanwha -->
+                        <div class="col-3">
+                            <a href="#" class="job_link">
+                                <div class="job_nohover">
+                                    <div class="box">
+                                        <div class="top_img"><img th:src="@{/img/main/mex_img6.png}" alt=""></div>
+                                        <div class="box_in">
+                                            <div class="logo"><img th:src="@{/img/main/bn6.png}" alt=""></div>
+                                            <div class="nm">Positions opening soon</div>
+                                            <div class="txt">Recruitment is in preparation</div>
+                                        </div>
+                                    </div>
+                                    <div class="arrow_wrap"><span class="arrow"></span></div>
+                                </div>
+                                <div class="job_hover_box">
+                                    <div class="job_info">
+                                        <div class="back_img"><img th:src="@{/img/main/hire_com/Company6.png}" alt=""></div>
+                                        <div class="jhb_info_box">
+                                            <div class="jhb_logo"><img th:src="@{/img/main/bn6.png}" alt=""></div>
+                                            <div class="jhb_ibox">
+                                                <div class="jhb_itit">Positions opening soon</div>
+                                                <div class="jhb_itxt">Recruitment is in preparation</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="iarrow_wrap"><span class="iarrow"></span></div>
+                                </div>
+                            </a>
+                        </div>
+                        <!-- 7. LS -->
+                        <div class="col-3">
+                            <a href="#" class="job_link">
+                                <div class="job_nohover">
+                                    <div class="box">
+                                        <div class="top_img"><img th:src="@{/img/main/mex_img7.png}" alt=""></div>
+                                        <div class="box_in">
+                                            <div class="logo"><img th:src="@{/img/main/bn7.png}" alt=""></div>
+                                            <div class="nm">Positions opening soon</div>
+                                            <div class="txt">Recruitment is in preparation</div>
+                                        </div>
+                                    </div>
+                                    <div class="arrow_wrap"><span class="arrow"></span></div>
+                                </div>
+                                <div class="job_hover_box">
+                                    <div class="job_info">
+                                        <div class="back_img"><img th:src="@{/img/main/hire_com/Company7.png}" alt=""></div>
+                                        <div class="jhb_info_box">
+                                            <div class="jhb_logo"><img th:src="@{/img/main/bn7.png}" alt=""></div>
+                                            <div class="jhb_ibox">
+                                                <div class="jhb_itit">Positions opening soon</div>
+                                                <div class="jhb_itxt">Recruitment is in preparation</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="iarrow_wrap"><span class="iarrow"></span></div>
+                                </div>
+                            </a>
+                        </div>
+                        <!-- 8. DL -->
+                        <div class="col-3">
+                            <a href="#" class="job_link">
+                                <div class="job_nohover">
+                                    <div class="box">
+                                        <div class="top_img"><img th:src="@{/img/main/mex_img8.png}" alt=""></div>
+                                        <div class="box_in">
+                                            <div class="logo"><img th:src="@{/img/main/bn8.png}" alt=""></div>
+                                            <div class="nm">Positions opening soon</div>
+                                            <div class="txt">Recruitment is in preparation</div>
+                                        </div>
+                                    </div>
+                                    <div class="arrow_wrap"><span class="arrow"></span></div>
+                                </div>
+                                <div class="job_hover_box">
+                                    <div class="job_info">
+                                        <div class="back_img"><img th:src="@{/img/main/hire_com/Company8.png}" alt=""></div>
+                                        <div class="jhb_info_box">
+                                            <div class="jhb_logo"><img th:src="@{/img/main/bn8.png}" alt=""></div>
+                                            <div class="jhb_ibox">
+                                                <div class="jhb_itit">Positions opening soon</div>
+                                                <div class="jhb_itxt">Recruitment is in preparation</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="iarrow_wrap"><span class="iarrow"></span></div>
+                                </div>
+                            </a>
+                        </div>
+                        <!-- 9. DOOSAN -->
+                        <div class="col-3">
+                            <a href="#" class="job_link">
+                                <div class="job_nohover">
+                                    <div class="box">
+                                        <div class="top_img"><img th:src="@{/img/main/mex_img9.png}" alt=""></div>
+                                        <div class="box_in">
+                                            <div class="logo"><img th:src="@{/img/main/bn9.png}" alt=""></div>
+                                            <div class="nm">Positions opening soon</div>
+                                            <div class="txt">Recruitment is in preparation</div>
+                                        </div>
+                                    </div>
+                                    <div class="arrow_wrap"><span class="arrow"></span></div>
+                                </div>
+                                <div class="job_hover_box">
+                                    <div class="job_info">
+                                        <div class="back_img"><img th:src="@{/img/main/hire_com/Company9.png}" alt=""></div>
+                                        <div class="jhb_info_box">
+                                            <div class="jhb_logo"><img th:src="@{/img/main/bn9.png}" alt=""></div>
+                                            <div class="jhb_ibox">
+                                                <div class="jhb_itit">Positions opening soon</div>
+                                                <div class="jhb_itxt">Recruitment is in preparation</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="iarrow_wrap"><span class="iarrow"></span></div>
+                                </div>
+                            </a>
+                        </div>
+                        <!-- 10. HANKOOK -->
+                        <div class="col-3">
+                            <a href="#" class="job_link">
+                                <div class="job_nohover">
+                                    <div class="box">
+                                        <div class="top_img"><img th:src="@{/img/main/mex_img10.png}" alt=""></div>
+                                        <div class="box_in">
+                                            <div class="logo"><img th:src="@{/img/main/bn10.png}" alt=""></div>
+                                            <div class="nm">Positions opening soon</div>
+                                            <div class="txt">Recruitment is in preparation</div>
+                                        </div>
+                                    </div>
+                                    <div class="arrow_wrap"><span class="arrow"></span></div>
+                                </div>
+                                <div class="job_hover_box">
+                                    <div class="job_info">
+                                        <div class="back_img"><img th:src="@{/img/main/hire_com/Company10.png}" alt=""></div>
+                                        <div class="jhb_info_box">
+                                            <div class="jhb_logo"><img th:src="@{/img/main/bn10.png}" alt=""></div>
+                                            <div class="jhb_ibox">
+                                                <div class="jhb_itit">Positions opening soon</div>
+                                                <div class="jhb_itxt">Recruitment is in preparation</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="iarrow_wrap"><span class="iarrow"></span></div>
+                                </div>
+                            </a>
+                        </div>
+                        <!-- 11. HYOSUNG -->
+                        <div class="col-3">
+                            <a href="#" class="job_link">
+                                <div class="job_nohover">
+                                    <div class="box">
+                                        <div class="top_img"><img th:src="@{/img/main/mex_img11.png}" alt=""></div>
+                                        <div class="box_in">
+                                            <div class="logo"><img th:src="@{/img/main/bn11.png}" alt=""></div>
+                                            <div class="nm">Positions opening soon</div>
+                                            <div class="txt">Recruitment is in preparation</div>
+                                        </div>
+                                    </div>
+                                    <div class="arrow_wrap"><span class="arrow"></span></div>
+                                </div>
+                                <div class="job_hover_box">
+                                    <div class="job_info">
+                                        <div class="back_img"><img th:src="@{/img/main/hire_com/Company11.png}" alt=""></div>
+                                        <div class="jhb_info_box">
+                                            <div class="jhb_logo"><img th:src="@{/img/main/bn11.png}" alt=""></div>
+                                            <div class="jhb_ibox">
+                                                <div class="jhb_itit">Positions opening soon</div>
+                                                <div class="jhb_itxt">Recruitment is in preparation</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="iarrow_wrap"><span class="iarrow"></span></div>
+                                </div>
+                            </a>
+                        </div>
+                        <!-- 12. KUMHO TIRE -->
+                        <div class="col-3">
+                            <a href="#" class="job_link">
+                                <div class="job_nohover">
+                                    <div class="box">
+                                        <div class="top_img"><img th:src="@{/img/main/mex_img12.png}" alt=""></div>
+                                        <div class="box_in">
+                                            <div class="logo"><img th:src="@{/img/main/bn12.png}" alt=""></div>
+                                            <div class="nm">Positions opening soon</div>
+                                            <div class="txt">Recruitment is in preparation</div>
+                                        </div>
+                                    </div>
+                                    <div class="arrow_wrap"><span class="arrow"></span></div>
+                                </div>
+                                <div class="job_hover_box">
+                                    <div class="job_info">
+                                        <div class="back_img"><img th:src="@{/img/main/hire_com/Company12.png}" alt=""></div>
+                                        <div class="jhb_info_box">
+                                            <div class="jhb_logo"><img th:src="@{/img/main/bn12.png}" alt=""></div>
+                                            <div class="jhb_ibox">
+                                                <div class="jhb_itit">Positions opening soon</div>
+                                                <div class="jhb_itxt">Recruitment is in preparation</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="iarrow_wrap"><span class="iarrow"></span></div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 문의처 -->
+                <div class="tel_wrap">
+                    <div class="tel_box">
+                        <div class="item bar">
+                            <div class="tel_th">기업회원 문의처</div>
+                            <div class="tel_num">02-6050-3566</div>
+                            <div class="tel_email">contact@korcham.net</div>
+                            <div class="tel_nm">대한상공회의소</div>
+                        </div>
+                        <div class="item">
+                            <div class="tel_th">개인회원 문의처</div>
+                            <div class="tel_num">070-7755-0075</div>
+                            <div class="tel_email">kusaf2020@gmail.com</div>
+                            <div class="tel_nm">한미동맹재단</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <!-- Footer -->
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+
+</div>
+
+<!-- Scripts -->
+<th:block th:replace="~{fragments/footer :: scripts}"></th:block>
+<script th:src="@{/js/main.js}"></script>
+
+<script>
+// 채용공고 카드 호버 효과 - 원본과 동일
+document.querySelectorAll('.job_link').forEach(function(link) {
+    link.addEventListener('mouseenter', function() {
+        this.classList.add('active');
+    });
+    link.addEventListener('mouseleave', function() {
+        this.classList.remove('active');
+    });
+});
+
+// 지도 기업 클릭 함수
+function jidoView(event, id) {
+    event.preventDefault();
+    console.log('Company clicked:', id);
+}
+
+function jidoClose(event) {
+    event.preventDefault();
+}
+</script>
+
+</body>
+</html>

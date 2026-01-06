@@ -18,18 +18,23 @@ public class MainController {
 
     @GetMapping({"/", "/main"})
     public String main(Model model) {
-        // 최신 채용공고 5개
+        // 최신 채용공고 12개
         List<JobPosting> recentJobs = jobPostingRepository.findActiveJobPostings(LocalDate.now());
-        if (recentJobs.size() > 5) {
-            recentJobs = recentJobs.subList(0, 5);
+        if (recentJobs.size() > 12) {
+            recentJobs = recentJobs.subList(0, 12);
         }
         model.addAttribute("recentJobs", recentJobs);
         
-        return "main/index";
+        return "main";
     }
 
     @GetMapping("/about")
     public String about() {
-        return "main/about";
+        return "about";
+    }
+    
+    @GetMapping("/policy")
+    public String policy() {
+        return "policy";
     }
 }

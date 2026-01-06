@@ -66,6 +66,14 @@ public class ApplicationService {
             application.setReviewStatus(reviewStatus);
         });
     }
+    
+    // 상태 변경 (문자열)
+    @Transactional
+    public void updateStatus(Long id, String status) {
+        applicationRepository.findById(id).ifPresent(application -> {
+            application.setStatus(status);
+        });
+    }
 
     // 통계: 심사상태별 지원자 수
     public List<Object[]> getReviewStatusStats(Long jobPostingId) {

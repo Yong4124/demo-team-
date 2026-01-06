@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>마이페이지 - USFK Jobs</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: #f5f5f5; }
+        a { text-decoration: none; color: inherit; }
+        .header { background: #fff; border-bottom: 1px solid #e0e0e0; padding: 15px 0; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 15px; }
+        .logo { font-size: 24px; font-weight: 700; color: #255EB8; }
+        .mypage_wrap { display: flex; gap: 30px; max-width: 1200px; margin: 40px auto; padding: 0 15px; }
+        .mypage_side { width: 250px; }
+        .user_info { background: #255EB8; color: #fff; padding: 25px 20px; border-radius: 10px 10px 0 0; text-align: center; }
+        .company_name { font-size: 18px; font-weight: 600; }
+        .side_menu { background: #fff; border: 1px solid #e0e0e0; border-top: none; border-radius: 0 0 10px 10px; }
+        .side_menu a { display: block; padding: 15px 20px; font-size: 15px; color: #333; border-bottom: 1px solid #f0f0f0; }
+        .side_menu a:hover, .side_menu a.active { background: #f5f8ff; color: #255EB8; }
+        .mypage_content { flex: 1; }
+        .page_tit { font-size: 24px; font-weight: 700; color: #333; padding-bottom: 15px; border-bottom: 2px solid #255EB8; margin-bottom: 30px; }
+        .info_section { background: #fff; border: 1px solid #e0e0e0; border-radius: 10px; margin-bottom: 20px; }
+        .section_tit { font-size: 16px; font-weight: 600; padding: 20px; background: #f9f9f9; border-bottom: 1px solid #e0e0e0; border-radius: 10px 10px 0 0; }
+        .section_content { padding: 20px; }
+        .info_row { display: flex; padding: 12px 0; border-bottom: 1px solid #f0f0f0; }
+        .info_row:last-child { border-bottom: none; }
+        .info_row .label { width: 150px; font-size: 14px; color: #666; font-weight: 500; }
+        .info_row .value { flex: 1; font-size: 14px; color: #333; }
+        .status_badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 12px; }
+        .status_badge.pending { background: #fff3cd; color: #856404; }
+        .status_badge.approved { background: #d4edda; color: #155724; }
+        .btn_area { margin-top: 30px; text-align: center; }
+        .btn_area a, .btn_area button { display: inline-block; padding: 12px 30px; font-size: 15px; border-radius: 5px; margin: 0 5px; cursor: pointer; }
+        .btn_primary { background: #255EB8; color: #fff; border: none; }
+        .btn_danger { background: #fff; color: #dc3545; border: 1px solid #dc3545; }
+        .footer { background: #f0f0f0; padding: 30px 0; margin-top: 60px; text-align: center; color: #666; font-size: 14px; }
+        @media (max-width: 992px) { .mypage_wrap { flex-direction: column; } .mypage_side { width: 100%; } }
+    </style>
+</head>
+<body>
+<header class="header"><div class="container"><a href="/" class="logo">USFK Jobs</a></div></header>
+
+<div class="mypage_wrap">
+    <div class="mypage_side">
+        <div class="user_info">
+            <p class="company_name" id="displayCompanyName">-</p>
+        </div>
+        <div class="side_menu">
+            <a href="/company/mypage" class="active">내 정보</a>
+            <a href="/company/mypage/edit">정보 수정</a>
+            <a href="/company/mypage/password">비밀번호 변경</a>
+            <a href="javascript:logout()">로그아웃</a>
+        </div>
+    </div>
+
+    <div class="mypage_content">
+        <h2 class="page_tit">내 정보</h2>
+
+        <div class="info_section">
+            <div class="section_tit">가입 상태</div>
+            <div class="section_content">
+                <div class="info_row">
+                    <span class="label">승인 상태</span>
+                    <span class="value"><span id="approvalStatus" class="status_badge pending">승인 대기중</span></span>
+                </div>
+                <div class="info_row">
+                    <span class="label">가입일</span>
+                    <span class="value" id="insertDate">-</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="info_section">
+            <div class="section_tit">회사 정보</div>
+            <div class="section_content">
+                <div class="info_row"><span class="label">회사명</span><span class="value" id="companyNmKo">-</span></div>
+                <div class="info_row"><span class="label">사업자등록번호</span><span class="value" id="bizNo">-</span></div>
+                <div class="info_row"><span class="label">업종</span><span class="value" id="industry">-</span></div>
+            </div>
+        </div>
+
+        <div class="info_section">
+            <div class="section_tit">담당자 정보</div>
+            <div class="section_content">
+                <div class="info_row"><span class="label">담당자명</span><span class="value" id="managerNm">-</span></div>
+                <div class="info_row"><span class="label">이메일</span><span class="value" id="email">-</span></div>
+                <div class="info_row"><span class="label">전화번호</span><span class="value" id="phone">-</span></div>
+            </div>
+        </div>
+
+        <div class="btn_area">
+            <a href="/company/mypage/edit" class="btn_primary">정보 수정</a>
+            <button type="button" class="btn_danger" onclick="if(confirm('정말 탈퇴하시겠습니까?'))withdrawMember()">회원 탈퇴</button>
+        </div>
+    </div>
+</div>
+
+<footer class="footer"><p>© 2025 USFK Jobs. All rights reserved.</p></footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var seqNo = sessionStorage.getItem('companySeqNo');
+    if (!seqNo) { alert('로그인이 필요합니다.'); window.location.href = '/company/login'; return; }
+    loadMyInfo(seqNo);
+});
+
+async function loadMyInfo(seqNo) {
+    try {
+        var res = await fetch('/api/company/mypage/' + seqNo);
+        var result = await res.json();
+        if (result.success) {
+            var d = result.data;
+            document.getElementById('displayCompanyName').textContent = d.companyNmKo || '-';
+            document.getElementById('companyNmKo').textContent = d.companyNmKo || '-';
+            document.getElementById('bizNo').textContent = d.bizNo || '-';
+            document.getElementById('industry').textContent = d.industry || '-';
+            document.getElementById('managerNm').textContent = d.managerNm || '-';
+            document.getElementById('email').textContent = d.email || '-';
+            document.getElementById('phone').textContent = d.phone || '-';
+            document.getElementById('insertDate').textContent = d.insertDate || '-';
+            var status = document.getElementById('approvalStatus');
+            if (d.approvalYn === 'Y') { status.textContent = '승인 완료'; status.className = 'status_badge approved'; }
+        }
+    } catch(e) { console.error(e); }
+}
+
+function logout() {
+    sessionStorage.clear();
+    alert('로그아웃 되었습니다.');
+    window.location.href = '/';
+}
+
+async function withdrawMember() {
+    var pw = prompt('비밀번호를 입력해주세요.');
+    if (!pw) return;
+    try {
+        var res = await fetch('/api/company/mypage/' + sessionStorage.getItem('companySeqNo'), {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ password: pw })
+        });
+        var data = await res.json();
+        alert(data.message);
+        if (data.success) logout();
+    } catch(e) { alert('오류가 발생했습니다.'); }
+}
+</script>
+</body>
+</html>

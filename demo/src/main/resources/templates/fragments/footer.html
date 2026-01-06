@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<!-- Footer Fragment -->
+<footer th:fragment="footer" class="footer">
+    <div class="container">
+        <div class="foot_family">
+            <div class="foot_item">
+                <div class="logo">
+                    <img th:src="@{/img/common/t_bndea.svg}" alt="대한상공회의소">
+                </div>
+                <div class="foot_txt">
+                    <p>서울특별시 중구 세종대로 39 대한상공회의소 TEL: 02-6050-3545 / Email: contact@korcham.net</p>
+                </div>
+            </div>
+            <div class="foot_item">
+                <div class="logo">
+                    <img th:src="@{/img/common/t_bnhan.svg}" alt="한미동맹재단">
+                </div>
+                <div class="foot_txt">
+                    <p>서울특별시 영등포구 여의대로 24 메이플빌딩 3층 한미동맹재단 TEL: 070-7755-0075 / Email: kusaf2020@gmail.com</p>
+                </div>
+            </div>
+            <div class="family">
+                <select onchange="if(this.value) window.open(this.value, '_blank');">
+                    <option value="">Family Site | 선택</option>
+                    <option value="https://www.korcham.net/">대한상공회의소</option>
+                    <option value="https://kusaf.org/">한미동맹재단</option>
+                    <option value="https://kdva.vet/">재한미군전우회</option>
+                </select>
+            </div>
+        </div>
+        <div class="privacy_txt">
+            <a th:href="@{/policy}">개인정보처리방침</a>
+        </div>
+    </div>
+</footer>
+
+<!-- Scripts Fragment -->
+<th:block th:fragment="scripts">
+    <script th:src="@{/js/jquery-3.1.1.min.js}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script th:src="@{/js/datepicker.min.js}"></script>
+    <script th:src="@{/js/datepicker.ko.js}"></script>
+    <script th:src="@{/js/common.js}"></script>
+</th:block>
+
+</html>

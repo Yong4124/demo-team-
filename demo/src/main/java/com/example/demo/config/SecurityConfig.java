@@ -24,7 +24,7 @@ public class SecurityConfig {
         http
             .authorizeHttpRequests(auth -> auth
                 // 정적 리소스 허용
-                .requestMatchers("/css/**", "/js/**", "/images/**", "/favicon.ico").permitAll()
+                .requestMatchers("/css/**", "/js/**", "/img/**", "/images/**", "/favicon.ico").permitAll()
                 // 메인, 소개, 채용공고 목록/상세 - 모두 접근 가능
                 .requestMatchers("/", "/main", "/about", "/job/**").permitAll()
                 // 회원가입, 로그인 관련 - 모두 접근 가능

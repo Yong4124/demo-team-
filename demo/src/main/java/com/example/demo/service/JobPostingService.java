@@ -4,12 +4,16 @@ import com.example.demo.entity.CompanyMember;
 import com.example.demo.entity.JobPosting;
 import com.example.demo.repository.JobPostingRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -42,6 +46,53 @@ public class JobPostingService {
     // 키워드 검색
     public List<JobPosting> search(String keyword) {
         return jobPostingRepository.searchByKeyword(keyword, LocalDate.now());
+    }
+
+    // 페이징 + 검색 조회
+    public Page<JobPosting> searchJobPostings(String keyword, String searchField, String groupCompany, Pageable pageable) {
+        List<JobPosting> allJobs = jobPostingRepository.findActiveJobPostings(LocalDate.now());
+        
+        // 필터링
+        List<JobPosting> filtered = allJobs.stream()
+                .filter(job -> {
+                    // 그룹사 필터
+                    if (groupCompany != null && !groupCompany.isEmpty()) {
+                        String company = job.getCompanyMember() != null ? job.getCompanyMember().getCompany() : "";
+                        if (!company.contains(groupCompany)) {
+                            return false;
+                        }
+                    }
+                    
+                    // 키워드 검색
+                    if (keyword != null && !keyword.trim().isEmpty()) {
+                        String kw = keyword.toLowerCase();
+                        if (searchField == null || searchField.equals("ALL")) {
+                            return (job.getTitle() != null && job.getTitle().toLowerCase().contains(kw)) ||
+                                   (job.getCompanyMember() != null && job.getCompanyMember().getCompany() != null && 
+                                    job.getCompanyMember().getCompany().toLowerCase().contains(kw)) ||
+                                   (job.getJobLocation() != null && job.getJobLocation().toLowerCase().contains(kw));
+                        } else if (searchField.equals("TITLE")) {
+                            return job.getTitle() != null && job.getTitle().toLowerCase().contains(kw);
+                        } else if (searchField.equals("COMPANY")) {
+                            return job.getCompanyMember() != null && job.getCompanyMember().getCompany() != null &&
+                                   job.getCompanyMember().getCompany().toLowerCase().contains(kw);
+                        } else if (searchField.equals("LOCATION")) {
+                            return job.getJobLocation() != null && job.getJobLocation().toLowerCase().contains(kw);
+                        }
+                    }
+                    return true;
+                })
+                .collect(Collectors.toList());
+        
+        // 페이징 처리
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), filtered.size());
+        
+        if (start > filtered.size()) {
+            return new PageImpl<>(List.of(), pageable, filtered.size());
+        }
+        
+        return new PageImpl<>(filtered.subList(start, end), pageable, filtered.size());
     }
 
     // 채용공고 등록
